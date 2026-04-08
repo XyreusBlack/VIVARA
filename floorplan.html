@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+<title>VIVĀRA · KRONOS · Ceremony Floor Plan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Tenor+Sans&family=EB+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --void:#040404; --surface:#0a0a0a;
+  --border:rgba(255,255,255,.06); --border-md:rgba(255,255,255,.11);
+  --white:#ece6dd; --muted:rgba(236,230,221,.4); --dim:rgba(236,230,221,.18);
+  --gold:#c4963d; --gold-d:rgba(196,150,61,.25); --gold-g:rgba(196,150,61,.07);
+  --px:clamp(14px,3.5vw,28px); --nav-h:50px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{height:100%;}
+body{
+  background:var(--void);color:var(--white);
+  font-family:'Tenor Sans',sans-serif;
+  font-size:clamp(11px,1.4vw,13px);
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;min-height:100%;
+}
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:999;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.88' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
+  animation:grain 10s ease-in-out infinite;
+}
+@keyframes grain{0%,100%{opacity:.45}50%{opacity:.7}}
+@keyframes pulse{0%,100%{opacity:.28}50%{opacity:1}}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.007)}}
+@keyframes flowDash{to{stroke-dashoffset:-40}}
+@keyframes roomPulse{
+  0%,100%{fill:var(--room-fill);stroke-opacity:.5}
+  50%{fill:var(--room-fill-hi);stroke-opacity:1}
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+em{font-family:'EB Garamond',serif;font-style:italic;color:var(--gold);}
+
+/* ─ LAYOUT ─ */
+.page{display:flex;flex-direction:column;height:100svh;overflow:hidden;}
+
+/* ─ HEADER ─ */
+.hdr{
+  height:var(--nav-h);flex-shrink:0;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 var(--px);
+  background:rgba(4,4,4,.95);backdrop-filter:blur(8px);
+  position:relative;z-index:100;
+}
+.hdr__brand{
+  font-family:'Cormorant Garamond',serif;font-weight:300;
+  font-size:clamp(13px,2.2vw,17px);letter-spacing:.28em;text-transform:uppercase;
+}
+.hdr__right{
+  display:flex;align-items:center;gap:clamp(8px,2vw,20px);
+}
+.hdr__meta{
+  font-size:8px;letter-spacing:.22em;text-transform:uppercase;color:var(--dim);
+}
+@media(max-width:520px){.hdr__meta{display:none;}}
+
+/* ─ TIMELINE: ensure steps never bleed vertically ─ */
+.tl-wrap{
+  flex-shrink:0;border-bottom:1px solid var(--border);
+  background:var(--surface);
+  overflow-x:auto;overflow-y:hidden;
+  -webkit-overflow-scrolling:touch;scrollbar-width:none;
+  position:relative;z-index:90;
+}
+.tl-wrap::-webkit-scrollbar{display:none;}
+.tl-track{display:flex;min-width:max-content;}
+
+.tl-step{
+  display:flex;flex-direction:column;justify-content:center;
+  padding:7px clamp(9px,1.8vw,18px);
+  border-right:1px solid var(--border);
+  cursor:pointer;position:relative;
+  transition:background .2s;
+  min-width:clamp(80px,13vw,120px);
+  gap:1px;user-select:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation;
+  flex-shrink:0;
+}
+.tl-step:hover{background:var(--gold-g);}
+.tl-step.active{background:var(--gold-g);}
+.tl-step.active::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:2px;
+  background:var(--step-col,var(--gold));
+}
+.tl-step.is-inter{min-width:clamp(68px,10vw,96px);opacity:.72;}
+.tl-step.is-inter.active{opacity:1;}
+.tl-step__time{font-size:8px;letter-spacing:.18em;color:var(--dim);text-transform:uppercase;}
+.tl-step__kanji{
+  font-family:'EB Garamond',serif;
+  font-size:clamp(13px,2vw,17px);color:var(--step-col,rgba(196,150,61,.3));
+  line-height:1;transition:color .3s;
+}
+.tl-step__label{
+  font-family:'Cormorant Garamond',serif;font-weight:300;
+  font-size:clamp(10px,1.6vw,12px);letter-spacing:.06em;text-transform:uppercase;
+  color:var(--white);transition:color .25s;
+}
+.tl-step.active .tl-step__label{color:var(--step-col,var(--gold));}
+.tl-step__sub{font-size:7px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;white-space:nowrap;}
+
+/* ─ MAIN GRID ─ */
+.main{flex:1;min-height:0;display:grid;grid-template-columns:1fr 320px;overflow:hidden;}
+
+/* ─ FLOOR PLAN ─ */
+.fp-wrap{display:flex;flex-direction:column;border-right:1px solid var(--border);overflow:hidden;}
+.fp-controls{
+  flex-shrink:0;display:flex;align-items:center;justify-content:space-between;
+  padding:8px var(--px);border-bottom:1px solid var(--border);
+}
+.fp-lbl{font-size:8px;letter-spacing:.28em;text-transform:uppercase;color:var(--dim);}
+.fp-nav{display:flex;gap:5px;}
+.fp-btn{
+  background:transparent;border:1px solid var(--border-md);
+  color:var(--muted);font-size:9px;padding:5px 11px;
+  cursor:pointer;font-family:'Tenor Sans',sans-serif;letter-spacing:.1em;
+  transition:border-color .2s,color .2s;user-select:none;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+}
+.fp-btn:hover{border-color:var(--gold-d);color:var(--gold);}
+.fp-btn.playing{border-color:var(--gold);color:var(--gold);}
+.fp-btn:disabled{opacity:.3;cursor:default;pointer-events:none;}
+
+.fp-svg-wrap{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:clamp(10px,2vw,20px);overflow:hidden;}
+#fp{width:100%;height:100%;display:block;}
+
+/* ── SVG room elements ── */
+.rm{
+  fill:rgba(255,255,255,.02);stroke:rgba(255,255,255,.1);stroke-width:.8;
+  cursor:pointer;transition:fill .4s,stroke .4s;
+}
+.rm:hover{fill:rgba(196,150,61,.05);stroke:rgba(196,150,61,.25);}
+.rm.active{
+  fill:var(--room-fill,rgba(196,150,61,.1));
+  stroke:var(--room-stroke,rgba(196,150,61,.5));stroke-width:1.2;
+  animation:roomPulse 3s ease-in-out infinite;
+}
+/* inactive rooms - dimmer */
+.rm.inactive-room{fill:rgba(255,255,255,.01);stroke:rgba(255,255,255,.055);cursor:default;}
+.rm.inactive-room:hover{fill:rgba(255,255,255,.01);stroke:rgba(255,255,255,.055);}
+
+.pool-rm{fill:rgba(255,255,255,.015);stroke:rgba(255,255,255,.08);stroke-width:.8;cursor:pointer;}
+.pool-rm.active{fill:var(--room-fill);stroke:var(--room-stroke);animation:roomPulse 3s ease-in-out infinite;}
+.pool-inner{fill:none;stroke:rgba(255,255,255,.06);stroke-width:.6;stroke-dasharray:3 4;}
+
+/* haptic dual rooms */
+.haptic-rm{fill:rgba(255,255,255,.02);stroke:rgba(255,255,255,.08);stroke-width:.8;cursor:pointer;transition:fill .4s,stroke .4s;}
+.haptic-rm:hover{fill:rgba(196,150,61,.04);stroke:rgba(196,150,61,.22);}
+.haptic-rm.active{fill:var(--room-fill);stroke:var(--room-stroke);animation:roomPulse 3s ease-in-out infinite;}
+
+.wall{stroke:rgba(255,255,255,.1);stroke-width:1;fill:none;}
+.wall-outer{stroke:rgba(255,255,255,.14);stroke-width:1.3;fill:none;}
+.wall-inner{stroke:rgba(255,255,255,.065);stroke-width:.6;fill:none;}
+
+.corridor-rm{fill:rgba(255,255,255,.01);stroke:rgba(255,255,255,.055);stroke-width:.6;transition:fill .4s,stroke .4s;}
+.corridor-rm.active{fill:rgba(196,150,61,.05);stroke:rgba(196,150,61,.25);}
+.entry-rm{fill:rgba(255,255,255,.015);stroke:rgba(255,255,255,.07);stroke-width:.7;}
+
+/* table & seats */
+.tbl{fill:rgba(196,150,61,.06);stroke:rgba(196,150,61,.2);stroke-width:.8;}
+.seat{fill:rgba(196,150,61,.14);}
+
+/* LED pillar */
+.pillar-ring{fill:none;stroke:rgba(196,150,61,.12);stroke-width:.7;transition:stroke .4s;}
+.pillar-ring.active{stroke:rgba(196,150,61,.55);animation:roomPulse 2s ease-in-out infinite;}
+.pillar-core{fill:rgba(196,150,61,.04);transition:fill .4s;}
+.pillar-core.active{fill:rgba(196,150,61,.1);}
+
+/* incense */
+.incense{opacity:0;transition:opacity .5s;}
+.incense.vis{opacity:1;animation:pulse 3s ease-in-out infinite;}
+
+/* flow paths */
+.flow{fill:none;stroke-width:1.2;stroke-linecap:round;opacity:0;pointer-events:none;transition:opacity .5s;}
+.flow.vis{opacity:1;}
+.flow-a{stroke:var(--gold);stroke-dasharray:5 4;animation:flowDash 1.4s linear infinite;}
+.flow-b{stroke:rgba(196,150,61,.45);stroke-dasharray:3 5;animation:flowDash 1.8s linear infinite;}
+.flow-r{stroke:rgba(196,150,61,.55);stroke-dasharray:5 4;animation:flowDash 1.4s linear infinite reverse;}
+
+/* glow dots */
+.gdot{opacity:0;transition:opacity .45s;}
+.gdot.vis{opacity:1;}
+
+/* haptic sand */
+.h-sand{opacity:0;transition:opacity .5s;}
+.h-sand.vis{opacity:1;}
+
+/* stair hatching */
+.stair{fill:none;stroke:rgba(255,255,255,.05);stroke-width:.5;}
+
+/* room text labels */
+.rm-num{
+  font-family:'Cormorant Garamond',serif;font-weight:300;
+  fill:rgba(255,255,255,.16);font-size:12px;letter-spacing:.06em;
+  pointer-events:none;transition:fill .4s;
+}
+.rm-num.active{fill:var(--lbl-col,rgba(196,150,61,.8));}
+.rm-lbl{
+  font-family:'Tenor Sans',sans-serif;
+  fill:rgba(255,255,255,.11);font-size:6.5px;letter-spacing:.22em;text-transform:uppercase;
+  pointer-events:none;transition:fill .4s;
+}
+.rm-lbl.active{fill:rgba(196,150,61,.65);}
+
+/* TBD bracket label */
+.tbd-label{
+  fill:rgba(196,150,61,.28);font-family:'Tenor Sans',sans-serif;
+  font-size:6px;letter-spacing:.22em;text-transform:uppercase;
+  pointer-events:none;
+}
+.tbd-bracket{stroke:rgba(196,150,61,.22);stroke-width:.7;fill:none;pointer-events:none;}
+
+/* ─ INFO PANEL ─ */
+.info{
+  background:var(--surface);display:flex;flex-direction:column;
+  overflow:hidden;border-left:1px solid var(--border);
+}
+.info-head{
+  flex-shrink:0;padding:clamp(12px,2vw,20px) clamp(14px,2vw,20px);
+  border-bottom:1px solid var(--border);
+}
+.info-eye{
+  font-size:7px;letter-spacing:.36em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:7px;display:flex;align-items:center;gap:9px;
+}
+.info-eye::before{content:'';width:14px;height:1px;background:var(--gold);animation:pulse 5s ease-in-out infinite;}
+.info-kanji{
+  font-family:'EB Garamond',serif;font-size:clamp(34px,5.5vw,50px);
+  color:var(--gold-d);line-height:1;float:right;margin-left:10px;
+  animation:breathe 8s ease-in-out infinite;
+}
+.info-title{
+  font-family:'Cormorant Garamond',serif;font-weight:300;
+  font-size:clamp(18px,2.8vw,26px);letter-spacing:.1em;text-transform:uppercase;
+  line-height:1.1;margin-bottom:4px;
+}
+.info-sub{font-family:'EB Garamond',serif;font-style:italic;font-size:clamp(11px,1.6vw,13px);color:var(--muted);}
+
+.info-scroll{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.info-scroll::-webkit-scrollbar{width:2px;}
+.info-scroll::-webkit-scrollbar-thumb{background:var(--gold-d);}
+.info-body{padding:clamp(12px,1.8vw,18px) clamp(14px,2vw,20px);display:flex;flex-direction:column;gap:13px;}
+
+.sec-lbl{
+  font-size:7px;letter-spacing:.33em;text-transform:uppercase;color:var(--gold);
+  margin-bottom:5px;display:flex;align-items:center;gap:9px;
+}
+.sec-lbl::after{content:'';flex:1;height:1px;background:var(--border);}
+
+.room-tags{display:flex;flex-wrap:wrap;gap:5px;}
+.room-tag{
+  font-size:8px;letter-spacing:.18em;text-transform:uppercase;
+  padding:3px 9px;border:1px solid var(--border-md);color:var(--muted);
+  transition:all .3s;
+}
+.room-tag.on{border-color:var(--step-col,var(--gold));color:var(--step-col,var(--gold));background:var(--gold-g);}
+
+.what{font-family:'EB Garamond',serif;font-size:clamp(12px,1.8vw,14px);color:var(--muted);line-height:1.72;}
+.what strong{color:var(--white);font-style:normal;font-weight:400;font-family:'Cormorant Garamond',serif;}
+
+.dirs{display:flex;flex-direction:column;gap:5px;}
+.dir{display:flex;gap:8px;align-items:flex-start;font-size:10.5px;color:var(--muted);line-height:1.55;}
+.dir-m{
+  flex-shrink:0;width:13px;height:13px;border:1px solid var(--border-md);
+  display:flex;align-items:center;justify-content:center;
+  font-size:7px;color:var(--gold);margin-top:1px;
+}
+.courses{display:flex;flex-direction:column;gap:5px;}
+.course{display:grid;grid-template-columns:18px 1fr;gap:7px;}
+.c-num{font-family:'Cormorant Garamond',serif;font-size:11px;color:var(--gold);opacity:.7;}
+.c-name{font-family:'Cormorant Garamond',serif;font-size:clamp(11px,1.6vw,13px);letter-spacing:.06em;text-transform:uppercase;}
+.c-sub{grid-column:2;font-size:9.5px;color:var(--dim);font-family:'EB Garamond',serif;font-style:italic;margin-top:-1px;}
+.quote{border-left:1px solid var(--gold-d);padding:7px 11px;font-family:'EB Garamond',serif;font-style:italic;font-size:clamp(11px,1.7vw,13px);color:var(--muted);line-height:1.65;}
+.incense-lbl{font-size:8px;letter-spacing:.1em;color:var(--dim);display:flex;align-items:center;gap:7px;}
+.incense-lbl::before{content:'◈';color:var(--gold);font-size:8px;}
+
+.info-bar{height:2px;flex-shrink:0;background:var(--step-col,var(--gold-d));transition:background .4s;animation:pulse 5s ease-in-out infinite;}
+
+/* ─ LEGEND ─ */
+.legend{
+  flex-shrink:0;border-top:1px solid var(--border);
+  padding:8px var(--px);display:flex;flex-wrap:wrap;gap:14px;align-items:center;
+  background:var(--void);
+}
+.leg{display:flex;align-items:center;gap:6px;font-size:7px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);}
+.leg-sw{width:16px;height:9px;flex-shrink:0;border:1px solid;}
+.leg-fl{width:20px;height:1.5px;flex-shrink:0;background-image:repeating-linear-gradient(90deg,var(--gold) 0,var(--gold) 4px,transparent 4px,transparent 8px);}
+
+/* ════════════════════════════════════════════════════════
+   MOBILE ≤ 720px
+   Strategy: natural scrolling page — no locked viewport.
+   Header + timeline are sticky. SVG sizes from viewBox.
+   Info panel flows beneath the floor plan naturally.
+   This avoids ALL the fragile height-math bugs.
+════════════════════════════════════════════════════════ */
+@media(max-width:720px){
+  :root{ --nav-h:46px; }
+
+  /* ── Page: unlocked, scrollable ── */
+  .page{
+    height:auto;
+    min-height:100svh;  /* background covers full screen */
+    overflow:visible;   /* no clipping — page itself scrolls */
+  }
+
+  /* ── Header: sticky so it's always reachable ── */
+  .hdr{
+    position:sticky;
+    top:0;
+    z-index:100;
+  }
+  .hdr__meta{ display:none; }
+
+  /* ── Timeline: sticky below header while page scrolls ── */
+  .tl-wrap{
+    position:sticky;
+    top:var(--nav-h);
+    z-index:90;
+    /* Natural height — no fixed px, no clipping */
+    height:auto;
+  }
+  .tl-step{
+    padding:7px 10px;
+    gap:2px;
+    min-width:76px;
+    height:auto;          /* let content define height */
+    flex-shrink:0;
+  }
+  .tl-step.is-inter{ min-width:64px; }
+  .tl-step__time{ font-size:7px; }
+  .tl-step__kanji{ font-size:14px; }
+  .tl-step__label{ font-size:10px; }
+  .tl-step__sub{ font-size:6.5px; letter-spacing:.07em; }
+
+  /* ── Main: simple column, natural height ── */
+  .main{
+    display:flex;
+    flex-direction:column;
+    height:auto;
+    overflow:visible;
+    min-height:0;
+  }
+
+  /* ── Floor plan panel: natural size, no rigid flex split ── */
+  .fp-wrap{
+    flex:none;
+    height:auto;
+    overflow:visible;
+    border-right:none;
+    border-bottom:1px solid var(--border);
+    display:flex;
+    flex-direction:column;
+  }
+  .fp-controls{
+    height:auto;
+    min-height:40px;
+    padding:7px 14px;
+    flex-shrink:0;
+  }
+  .fp-lbl{ font-size:7px; }
+  .fp-nav{ gap:5px; }
+  .fp-btn{
+    padding:8px 12px;
+    font-size:9px;
+    min-height:36px; /* large tap target */
+    line-height:1;
+  }
+
+  /* ── SVG wrapper: block, no flex centering, natural height ── */
+  .fp-svg-wrap{
+    flex:none;
+    display:block;
+    padding:8px 10px 10px;
+    overflow:visible;
+    height:auto;
+    /* Remove min-height:0 and the flex alignment */
+  }
+
+  /* ── SVG: width-driven, height from viewBox aspect ratio ──
+     viewBox="0 0 820 530" → height = width × (530/820) ≈ 64.6%
+     At 370px wide: height ≈ 239px — clear and proportionate ── */
+  #fp{
+    display:block;
+    width:100%;
+    height:auto;        /* intrinsic height from viewBox */
+  }
+
+  .legend{ display:none; }
+
+  /* ── Info panel: natural height, page scroll carries it ── */
+  .info{
+    flex:none;
+    height:auto;
+    overflow:visible;
+    border-left:none;
+    border-top:1px solid var(--border);
+    display:flex;
+    flex-direction:column;
+    /* Ensure it's always at least somewhat visible */
+    padding-bottom:env(safe-area-inset-bottom, 0px);
+  }
+  .info-head{
+    flex-shrink:0;
+    padding:11px 16px 9px;
+  }
+  .info-eye{ font-size:6.5px; margin-bottom:5px; }
+  .info-kanji{ font-size:22px; margin-left:8px; }
+  .info-title{ font-size:15px; margin-bottom:3px; letter-spacing:.08em; }
+  .info-sub{ font-size:11px; }
+
+  /* Info scroll: no overflow trap — page scroll handles everything */
+  .info-scroll{
+    overflow:visible;
+    flex:none;
+    height:auto;
+    /* Remove the -webkit-overflow-scrolling and overflow-y:auto */
+  }
+  .info-body{ padding:11px 16px 20px; gap:11px; }
+
+  .sec-lbl{ font-size:6.5px; margin-bottom:4px; }
+  .room-tags{ gap:6px; }
+  .room-tag{ font-size:7.5px; padding:4px 9px; }
+  .what{ font-size:12px; line-height:1.65; }
+  .dirs{ gap:6px; }
+  .dir{ font-size:10.5px; line-height:1.55; gap:8px; }
+  .dir-m{ width:14px; height:14px; font-size:7px; }
+  .courses{ gap:6px; }
+  .c-name{ font-size:11px; }
+  .c-sub{ font-size:9.5px; }
+  .quote{ font-size:11.5px; padding:6px 11px; line-height:1.6; }
+  .incense-lbl{ font-size:8px; }
+  .info-bar{ height:3px; }
+}
+
+/* ── Very small phones ≤390px ── */
+@media(max-width:390px){
+  :root{ --nav-h:42px; }
+  .tl-step{ min-width:68px; padding:6px 8px; }
+  .tl-step__sub{ display:none; }
+  .fp-btn{ padding:7px 9px; font-size:8.5px; }
+  .info-kanji{ font-size:18px; }
+  .info-title{ font-size:14px; }
+  .info-body{ padding:9px 14px 16px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="hdr__brand">VIVĀRA · KRONOS</div>
+  <div class="hdr__right">
+    <div class="hdr__meta">29 April · Chiba · 21 Guests</div>
+  </div>
+</header>
+
+<!-- TIMELINE -->
+<div class="tl-wrap"><div class="tl-track" id="tl-track"></div></div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- ── FLOOR PLAN ── -->
+  <div class="fp-wrap">
+    <div class="fp-controls">
+      <div class="fp-lbl">KRONOS · Interactive Floor Plan</div>
+      <div class="fp-nav">
+        <button class="fp-btn" id="btn-prev">← Prev</button>
+        <button class="fp-btn" id="btn-play">▷ Play</button>
+        <button class="fp-btn" id="btn-next">Next →</button>
+      </div>
+    </div>
+
+    <div class="fp-svg-wrap">
+    <svg id="fp" viewBox="0 0 820 530" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"
+      style="touch-action:manipulation;overflow:visible;">
+      <defs>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="2.5" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <marker id="arG" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L6,3 Z" fill="rgba(196,150,61,.7)"/>
+        </marker>
+        <marker id="arD" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L6,3 Z" fill="rgba(196,150,61,.38)"/>
+        </marker>
+      </defs>
+
+      <!-- ══ OUTER BUILDING SHELL ══ -->
+      <path class="wall-outer" d="M 105,18 L 762,18 L 762,472 L 627,472 L 627,508 L 105,508 Z"/>
+
+      <!-- ══ INACTIVE ROOMS (dimmed, structural only) ══ -->
+      <!-- Room 2 -->
+      <rect class="rm inactive-room" x="463" y="18" width="164" height="162"/>
+      <!-- Room 3 -->
+      <rect class="rm inactive-room" x="627" y="18" width="135" height="105"/>
+      <!-- Room 4 -->
+      <rect class="rm inactive-room" x="627" y="105" width="135" height="100"/>
+      <!-- Room 7 -->
+      <rect class="rm inactive-room" x="627" y="387" width="135" height="85"/>
+
+      <!-- Internal wall lines -->
+      <line class="wall-inner" x1="463" y1="18" x2="463" y2="180"/>
+      <line class="wall-inner" x1="463" y1="180" x2="627" y2="180"/>
+      <line class="wall-inner" x1="627" y1="18" x2="627" y2="472"/>
+      <line class="wall-inner" x1="627" y1="105" x2="762" y2="105"/>
+      <line class="wall-inner" x1="627" y1="205" x2="762" y2="205"/>
+      <line class="wall-inner" x1="627" y1="301" x2="762" y2="301"/>
+      <line class="wall-inner" x1="627" y1="387" x2="762" y2="387"/>
+
+      <!-- ══ ROOM 1 — LED PILLAR / ORBSEER ══ -->
+      <rect id="rm-r1" class="rm" x="105" y="388" width="175" height="120" rx="0"/>
+
+      <!-- Orbseer LED pillar (three concentric rings) -->
+      <circle id="pillar-o" class="pillar-ring" cx="192" cy="450" r="44"/>
+      <circle id="pillar-m" class="pillar-ring" cx="192" cy="450" r="29" stroke-dasharray="2.5 2.5"/>
+      <circle id="pillar-i" class="pillar-core" cx="192" cy="450" r="14"/>
+
+      <!-- Room 1 staircase hatching -->
+      <g opacity=".6">
+        <line class="stair" x1="115" y1="455" x2="155" y2="455"/>
+        <line class="stair" x1="115" y1="465" x2="155" y2="465"/>
+        <line class="stair" x1="115" y1="475" x2="155" y2="475"/>
+        <line class="stair" x1="115" y1="485" x2="155" y2="485"/>
+        <line class="stair" x1="115" y1="495" x2="155" y2="495"/>
+        <rect x="115" y="453" width="40" height="48" fill="rgba(255,255,255,.01)" stroke="rgba(255,255,255,.07)" stroke-width=".6"/>
+      </g>
+
+      <!-- ══ HAPTIC ROOMS 5 + 6 (TBD) ══ -->
+      <rect id="rm-r5" class="haptic-rm" x="627" y="205" width="135" height="96" rx="0"/>
+      <rect id="rm-r6" class="haptic-rm" x="627" y="301" width="135" height="86" rx="0"/>
+
+      <!-- TBD bracket for haptic -->
+      <path class="tbd-bracket" d="M 770,208 L 780,208 L 780,384 L 770,384"/>
+      <text class="tbd-label" x="793" y="297" text-anchor="middle" transform="rotate(90,793,297)">HAPTIC · TBD</text>
+
+      <!-- ══ CORRIDOR between Room 1 and Pool ══ -->
+      <rect id="rm-corridor" class="corridor-rm" x="280" y="382" width="97" height="40"/>
+      <line class="wall-inner" x1="280" y1="382" x2="377" y2="382"/>
+      <line class="wall-inner" x1="280" y1="422" x2="377" y2="422"/>
+
+      <!-- ══ POOL AREA ══ -->
+      <line class="wall-inner" x1="105" y1="195" x2="280" y2="195"/>
+      <line class="wall-inner" x1="377" y1="195" x2="627" y2="195"/>
+
+      <!-- Pool oval -->
+      <ellipse id="rm-pool" class="pool-rm" cx="383" cy="318" rx="172" ry="118"/>
+      <ellipse class="pool-inner" cx="383" cy="318" rx="124" ry="79"/>
+
+      <!-- Dining table (long communal) -->
+      <rect class="tbl" x="294" y="297" width="178" height="42" rx="2"/>
+
+      <!-- Seats top row (9) -->
+      <rect class="seat" x="302" y="288" width="7" height="7" rx="1"/>
+      <rect class="seat" x="318" y="288" width="7" height="7" rx="1"/>
+      <rect class="seat" x="335" y="288" width="7" height="7" rx="1"/>
+      <rect class="seat" x="352" y="288" width="7" height="7" rx="1"/>
+      <rect class="seat" x="369" y="288" width="7" height="7" rx="1"/>
+      <rect class="seat" x="386" y="288" width="7" height="7" rx="1"/>
+      <rect class="seat" x="403" y="288" width="7" height="7" rx="1"/>
+      <rect class="seat" x="420" y="288" width="7" height="7" rx="1"/>
+      <rect class="seat" x="456" y="288" width="7" height="7" rx="1"/>
+      <!-- Seats bottom row (9) -->
+      <rect class="seat" x="302" y="344" width="7" height="7" rx="1"/>
+      <rect class="seat" x="318" y="344" width="7" height="7" rx="1"/>
+      <rect class="seat" x="335" y="344" width="7" height="7" rx="1"/>
+      <rect class="seat" x="352" y="344" width="7" height="7" rx="1"/>
+      <rect class="seat" x="369" y="344" width="7" height="7" rx="1"/>
+      <rect class="seat" x="386" y="344" width="7" height="7" rx="1"/>
+      <rect class="seat" x="403" y="344" width="7" height="7" rx="1"/>
+      <rect class="seat" x="420" y="344" width="7" height="7" rx="1"/>
+      <rect class="seat" x="456" y="344" width="7" height="7" rx="1"/>
+      <!-- Seats sides (3 each) -->
+      <rect class="seat" x="284" y="302" width="7" height="7" rx="1"/>
+      <rect class="seat" x="284" y="315" width="7" height="7" rx="1"/>
+      <rect class="seat" x="284" y="328" width="7" height="7" rx="1"/>
+      <rect class="seat" x="473" y="302" width="7" height="7" rx="1"/>
+      <rect class="seat" x="473" y="315" width="7" height="7" rx="1"/>
+      <rect class="seat" x="473" y="328" width="7" height="7" rx="1"/>
+
+      <!-- Incense corner altars (4) -->
+      <g id="inc-tl" class="incense">
+        <circle cx="228" cy="230" r="4.5" fill="none" stroke="rgba(196,150,61,.6)" stroke-width=".8"/>
+        <line x1="228" y1="221" x2="228" y2="213" stroke="rgba(196,150,61,.35)" stroke-width=".8"/>
+      </g>
+      <g id="inc-tr" class="incense">
+        <circle cx="540" cy="230" r="4.5" fill="none" stroke="rgba(196,150,61,.6)" stroke-width=".8"/>
+        <line x1="540" y1="221" x2="540" y2="213" stroke="rgba(196,150,61,.35)" stroke-width=".8"/>
+      </g>
+      <g id="inc-bl" class="incense">
+        <circle cx="228" cy="400" r="4.5" fill="none" stroke="rgba(196,150,61,.6)" stroke-width=".8"/>
+        <line x1="228" y1="409" x2="228" y2="417" stroke="rgba(196,150,61,.35)" stroke-width=".8"/>
+      </g>
+      <g id="inc-br" class="incense">
+        <circle cx="540" cy="400" r="4.5" fill="none" stroke="rgba(196,150,61,.6)" stroke-width=".8"/>
+        <line x1="540" y1="409" x2="540" y2="417" stroke="rgba(196,150,61,.35)" stroke-width=".8"/>
+      </g>
+
+      <!-- ══ HAPTIC SAND TEXTURE ══ -->
+      <g id="h-sand" class="h-sand">
+        <circle cx="646" cy="224" r=".9" fill="rgba(196,150,61,.3)"/>
+        <circle cx="659" cy="232" r=".9" fill="rgba(196,150,61,.25)"/>
+        <circle cx="672" cy="221" r=".9" fill="rgba(196,150,61,.28)"/>
+        <circle cx="685" cy="229" r=".9" fill="rgba(196,150,61,.22)"/>
+        <circle cx="698" cy="219" r=".9" fill="rgba(196,150,61,.28)"/>
+        <circle cx="711" cy="235" r=".9" fill="rgba(196,150,61,.2)"/>
+        <circle cx="724" cy="225" r=".9" fill="rgba(196,150,61,.25)"/>
+        <circle cx="737" cy="218" r=".9" fill="rgba(196,150,61,.22)"/>
+        <circle cx="750" cy="228" r=".9" fill="rgba(196,150,61,.2)"/>
+        <circle cx="651" cy="244" r=".9" fill="rgba(196,150,61,.22)"/>
+        <circle cx="664" cy="252" r=".9" fill="rgba(196,150,61,.2)"/>
+        <circle cx="677" cy="243" r=".9" fill="rgba(196,150,61,.25)"/>
+        <circle cx="690" cy="251" r=".9" fill="rgba(196,150,61,.2)"/>
+        <circle cx="703" cy="244" r=".9" fill="rgba(196,150,61,.22)"/>
+        <circle cx="716" cy="252" r=".9" fill="rgba(196,150,61,.2)"/>
+        <circle cx="729" cy="243" r=".9" fill="rgba(196,150,61,.22)"/>
+        <circle cx="742" cy="251" r=".9" fill="rgba(196,150,61,.2)"/>
+        <circle cx="658" cy="264" r=".9" fill="rgba(196,150,61,.2)"/>
+        <circle cx="671" cy="271" r=".9" fill="rgba(196,150,61,.22)"/>
+        <circle cx="684" cy="263" r=".9" fill="rgba(196,150,61,.2)"/>
+        <circle cx="697" cy="270" r=".9" fill="rgba(196,150,61,.22)"/>
+        <circle cx="710" cy="262" r=".9" fill="rgba(196,150,61,.2)"/>
+        <circle cx="723" cy="271" r=".9" fill="rgba(196,150,61,.2)"/>
+        <!-- Room 6 sand -->
+        <circle cx="646" cy="320" r=".9" fill="rgba(196,150,61,.25)"/>
+        <circle cx="659" cy="330" r=".9" fill="rgba(196,150,61,.2)"/>
+        <circle cx="672" cy="318" r=".9" fill="rgba(196,150,61,.22)"/>
+        <circle cx="685" cy="328" r=".9" fill="rgba(196,150,61,.2)"/>
+        <circle cx="698" cy="316" r=".9" fill="rgba(196,150,61,.25)"/>
+        <circle cx="711" cy="332" r=".9" fill="rgba(196,150,61,.18)"/>
+        <circle cx="724" cy="322" r=".9" fill="rgba(196,150,61,.22)"/>
+        <circle cx="737" cy="315" r=".9" fill="rgba(196,150,61,.2)"/>
+        <circle cx="750" cy="326" r=".9" fill="rgba(196,150,61,.18)"/>
+        <circle cx="653" cy="342" r=".9" fill="rgba(196,150,61,.2)"/>
+        <circle cx="666" cy="350" r=".9" fill="rgba(196,150,61,.18)"/>
+        <circle cx="679" cy="341" r=".9" fill="rgba(196,150,61,.22)"/>
+        <circle cx="692" cy="349" r=".9" fill="rgba(196,150,61,.2)"/>
+        <circle cx="705" cy="342" r=".9" fill="rgba(196,150,61,.18)"/>
+      </g>
+
+      <!-- ══ ENTRY / EXIT ══ -->
+      <rect class="entry-rm" x="638" y="445" width="124" height="63"/>
+      <text font-family="Tenor Sans,sans-serif" font-size="6" fill="rgba(255,255,255,.16)" letter-spacing=".22em" text-anchor="middle" x="700" y="472">ENTRY / EXIT</text>
+      <!-- arrival arrow -->
+      <path id="entry-arrow" d="M700,445 L700,430" stroke="rgba(196,150,61,.5)" stroke-width="1" fill="none" marker-end="url(#arG)" opacity="0" style="transition:opacity .4s;"/>
+
+      <!-- ══ FLOW PATHS ══ -->
+      <!-- Pool → Room 1 -->
+      <path id="fl-p1" class="flow flow-a"
+        d="M 244,348 Q 218,368 198,386" marker-end="url(#arG)"/>
+      <!-- Room 1 → Pool -->
+      <path id="fl-1p" class="flow flow-r"
+        d="M 198,386 Q 222,362 248,342" marker-end="url(#arG)"/>
+      <!-- Pool → Haptic (small group) -->
+      <path id="fl-ph" class="flow flow-b"
+        d="M 523,278 Q 572,262 627,252" marker-end="url(#arD)"/>
+      <!-- Haptic → Pool -->
+      <path id="fl-hp" class="flow flow-b" style="animation-direction:reverse"
+        d="M 627,252 Q 576,265 524,280" marker-end="url(#arD)"/>
+      <!-- Arrival: Entry → Pool -->
+      <path id="fl-arr" class="flow flow-a"
+        d="M 662,445 Q 640,420 596,390 Q 555,368 520,345" marker-end="url(#arG)"/>
+      <!-- Elijah return: Room 1 → Pool (Act V) -->
+      <path id="fl-eli" class="flow flow-r" style="stroke:rgba(196,150,61,.6);stroke-dasharray:4 3;"
+        d="M 236,400 Q 262,382 295,360" marker-end="url(#arG)"/>
+      <!-- Both directions post ceremony -->
+      <path id="fl-com" class="flow flow-a" style="stroke-dasharray:4 3;opacity:0;"
+        d="M 225,395 Q 200,370 195,388" marker-end="url(#arG)"/>
+
+      <!-- ══ GLOW DOTS ══ -->
+      <circle id="gd-pool" class="gdot" cx="383" cy="317" r="4" fill="rgba(196,150,61,.75)" filter="url(#glow)"/>
+      <circle id="gd-r1"   class="gdot" cx="228" cy="425" r="3.5" fill="rgba(196,150,61,.65)" filter="url(#glow)"/>
+      <circle id="gd-hap"  class="gdot" cx="694" cy="253" r="3"   fill="rgba(196,150,61,.5)"  filter="url(#glow)"/>
+      <circle id="gd-ent"  class="gdot" cx="700" cy="476" r="3.5" fill="rgba(196,150,61,.6)"  filter="url(#glow)"/>
+
+      <!-- ══ ROOM LABELS (active spaces only) ══ -->
+      <!-- Pool -->
+      <text font-family="Cormorant Garamond,serif" font-size="22" font-weight="300"
+        fill="rgba(255,255,255,.055)" letter-spacing=".14em" text-anchor="middle"
+        x="383" y="326">POOL</text>
+
+      <!-- Room 1 -->
+      <text class="rm-num" id="lbl-n1" x="124" y="413">1</text>
+      <text class="rm-lbl" id="lbl-r1" x="124" y="423">LED PILLAR</text>
+
+      <!-- Haptic rooms 5/6 -->
+      <text class="rm-num" id="lbl-n5" x="636" y="228">5</text>
+      <text class="rm-num" id="lbl-n6" x="636" y="324">6</text>
+      <text class="rm-lbl" id="lbl-h" x="636" y="238">HAPTIC</text>
+
+      <!-- Inactive room numbers (very dim) -->
+      <text font-family="Cormorant Garamond,serif" font-size="11" fill="rgba(255,255,255,.09)" x="534" y="44">2</text>
+      <text font-family="Cormorant Garamond,serif" font-size="11" fill="rgba(255,255,255,.09)" x="687" y="38">3</text>
+      <text font-family="Cormorant Garamond,serif" font-size="11" fill="rgba(255,255,255,.09)" x="687" y="130">4</text>
+      <text font-family="Cormorant Garamond,serif" font-size="11" fill="rgba(255,255,255,.09)" x="687" y="412">7</text>
+
+      <!-- Corridor label -->
+      <text font-family="Tenor Sans,sans-serif" font-size="5.5" fill="rgba(255,255,255,.1)"
+        letter-spacing=".18em" text-anchor="middle" x="329" y="403">CORRIDOR</text>
+
+      <!-- ══ COMPASS ══ -->
+      <g opacity=".2" transform="translate(130,62)">
+        <circle cx="0" cy="0" r="13" stroke="rgba(255,255,255,.3)" stroke-width=".5" fill="none"/>
+        <line x1="0" y1="-9" x2="0" y2="-4" stroke="rgba(196,150,61,.7)" stroke-width="1.2"/>
+        <line x1="0" y1="9" x2="0" y2="4" stroke="rgba(255,255,255,.3)" stroke-width=".7"/>
+        <line x1="-9" y1="0" x2="-4" y2="0" stroke="rgba(255,255,255,.3)" stroke-width=".7"/>
+        <line x1="9" y1="0" x2="4" y2="0" stroke="rgba(255,255,255,.3)" stroke-width=".7"/>
+        <text font-size="5.5" fill="rgba(196,150,61,.6)" text-anchor="middle" x="0" y="-14"
+          font-family="Tenor Sans,sans-serif">N</text>
+      </g>
+
+    </svg>
+    </div>
+
+    <!-- LEGEND -->
+    <div class="legend">
+      <div class="leg"><div class="leg-sw" style="background:rgba(196,150,61,.12);border-color:rgba(196,150,61,.5)"></div>Active Space</div>
+      <div class="leg"><div class="leg-sw" style="background:rgba(255,255,255,.015);border-color:rgba(255,255,255,.1)"></div>Structural Only</div>
+      <div class="leg"><div class="leg-fl"></div>Guest Flow</div>
+      <div class="leg"><div class="leg-fl" style="opacity:.35"></div>Rotation (2–4)</div>
+      <div class="leg" style="margin-left:auto;font-size:7px;letter-spacing:.14em;">Tap room or use timeline</div>
+    </div>
+  </div>
+
+  <!-- ── INFO PANEL ── -->
+  <div class="info" id="info-panel">
+    <div class="info-head">
+      <div class="info-eye" id="i-eye">—</div>
+      <div style="overflow:hidden;">
+        <div class="info-kanji" id="i-kanji"></div>
+        <div class="info-title" id="i-title">—</div>
+        <div class="info-sub" id="i-sub"></div>
+      </div>
+    </div>
+    <div class="info-scroll"><div class="info-body" id="i-body"></div></div>
+    <div class="info-bar" id="i-bar"></div>
+  </div>
+
+</div><!-- /main -->
+</div><!-- /page -->
+
+<script>
+/* ══════════════════════════════════════════════════
+   STEPS DATA
+══════════════════════════════════════════════════ */
+const S = [
+  { id:'arrival', time:'2:30', lbl:'Arrival', sub:'The Descent', k:'', col:'#c4963d', isInter:false,
+    rooms:['entry'], flows:['fl-arr'], dots:['gd-ent'], incense:false, sand:false, corridor:false,
+    info:{eye:'2:30 PM · KRONOS Entry',title:'The Descent',sub:'Guests arrive at KRONOS · Chiba',
+      quote:'"The space descends. So do you."',
+      what:'Guests descend the lower staircase into the building. The physical act of going below grade is the first ritual — an embodied entry into Act I: Earth. Sound and scent prime the senses before a single word is spoken.',
+      dirs:['Entry scent: deep earth & oud — grounding, mineral, ancient','Elijah\'s pre-recorded tambor drone plays at arrival volume','Lighting: minimal — candlelit concrete. No announcement.','Guests guided directly to the Pool. No social milling — the procession is deliberate.','Adrien captures the descent staircase from above and below'],
+    }
+  },
+  { id:'opening', time:'3:00', lbl:'Opening', sub:'Brand Introduction', k:'', col:'#c4963d', isInter:false,
+    rooms:['pool'], flows:[], dots:['gd-pool'], incense:false, sand:false, corridor:false,
+    info:{eye:'3:00 PM · The Pool',title:'The Opening',sub:'Yuto & Austin · VIVĀRA',
+      quote:'"There is no menu. Trust is the first course."',
+      what:'Guests are seated. Washi notebooks and pens are already placed — no explanation given yet. The founders share who VIVĀRA is, what Element 003 means, and why this evening exists as ceremony rather than dinner.',
+      dirs:['5–7 min. Intimate — a sharing, not a presentation','Three sacred ingredients named: Shilajit, Tulsi, Saffron','One VIVĀRA bottle on table as altar object — not for sale','VIVARADROPS.COM visible as a printed element in the space'],
+    }
+  },
+  { id:'act1', time:'3:10', lbl:'Act I', sub:'Earth · Tsuchi', k:'土', col:'#7a5828', isInter:false,
+    rooms:['pool'], flows:[], dots:['gd-pool'], incense:true, sand:false, corridor:false,
+    info:{eye:'3:10 PM · Act I · 土 Tsuchi',title:'Earth',sub:'The Descent · Courses 01–02',
+      quote:'"You must first touch the ground before you can rise from it."',
+      what:'<strong>The Flame ritual opens the act</strong> — 4 chosen guests light the four corner incense altars simultaneously. Elijah opens with traditional tambor — 5–10 minutes, grounded and ancestral. Courses are set and served during his performance.',
+      courses:[
+        {n:'01',name:'Root Protocol',sub:'Obsidian miso broth · Shilajit dissolution · 3 saffron threads · Hold vessel 30 sec — warmth through palms is the first information'},
+        {n:'02',name:'Mineral Offering',sub:'Fermented burdock · Black garlic 90-day · Celeriac ash · Miso-Shilajit glaze on river stone'},
+      ],
+      dirs:['Incense: Vetiver · Myrrh · Black Oud','4 Flame guests rotate each act — all 21 guests hold flame across the evening','Elijah moves to Room 1 after tambor set to prepare for LED performance','Shilajit dissolved in broth — founders tell the origin story'],
+      incense:'Vetiver · Myrrh · Black Oud'
+    }
+  },
+  { id:'inter1', time:'', lbl:'Inter I', sub:'Room 1 + Haptic', k:'', col:'#c4963d', isInter:true,
+    rooms:['room1','haptic'], flows:['fl-p1','fl-ph'], dots:['gd-r1','gd-hap'], incense:true, sand:true, corridor:true,
+    info:{eye:'Intermission I · After Act I',title:'Into the Pillar',sub:'Room 1 awakens · Haptic Rotation 1',
+      quote:'"Sound becomes light. Light becomes the passage between worlds."',
+      what:'Guests write in washi notebooks — 30–40 seconds of silence. All guests move to Room 1 where Elijah performs to Orbseer audio-reactive visuals. <strong>2–4 guests quietly rotate</strong> to the Haptic Room for 3–5 minutes.',
+      dirs:['Room 1: Elijah plays tambor — same ancestral root. Visuals first wake.','Haptic Room Rotation 1: cymatic installation, mountain source encounter','Chuck prepares next courses in the Pool during intermission','Duration: 7–10 minutes'],
+    }
+  },
+  { id:'act2', time:'~4:15', lbl:'Act II', sub:'Water · Mizu', k:'水', col:'#1e4e6e', isInter:false,
+    rooms:['pool'], flows:[], dots:['gd-pool'], incense:true, sand:false, corridor:false,
+    info:{eye:'~4:15 PM · Act II · 水 Mizu',title:'Water',sub:'Memory · Courses 03–04',
+      quote:'"Emotion is not weakness. It is the body\'s most ancient intelligence."',
+      what:'New Flame (4 new guests) light the Act II incense. Chuck narrates the Water element. Course 04 opens with a guest-led word ritual — each person speaks one word aloud before eating.',
+      courses:[
+        {n:'03',name:'Tide',sub:'Hokkaido sea urchin · Clarified dashi · Tulsi cold-press oil hidden beneath · Preserved lemon'},
+        {n:'04',name:'Emotion',sub:'Persimmon-sake broth · Saffron bloom · Handmade tofu skin · Each guest speaks one word before eating'},
+      ],
+      dirs:['Incense: Sandalwood · Lotus · Blue Musk','Word ritual: begins when first guest chooses to speak — no pressure','Tulsi introduced: hidden cold-press oil beneath the sea urchin','Product: Tulsi as sacred adaptogen — breath, clarity, calm'],
+      incense:'Sandalwood · Lotus · Blue Musk'
+    }
+  },
+  { id:'inter2', time:'', lbl:'Inter II', sub:'Synthesizer Awakens', k:'', col:'#c4963d', isInter:true,
+    rooms:['room1','haptic'], flows:['fl-p1','fl-ph'], dots:['gd-r1','gd-hap'], incense:true, sand:true, corridor:true,
+    info:{eye:'Intermission II · After Act II',title:'The Synthesizer Awakens',sub:'Room 1 · Energy builds · Haptic Rotation 2',
+      quote:'"The pillar starts to pulse."',
+      what:'Notebooks open. Guests move to Room 1. <strong>Elijah introduces the synthesizer</strong> alongside the tambor — the electronic current begins. Orbseer visuals become more alive. Haptic Room Rotation 2: different 2–4 guests.',
+      dirs:['Room 1: tambor + synthesizer — first time together','Orbseer visuals become more responsive and complex','Haptic Rotation 2: different guests from Rotation 1','Duration: 7–10 minutes'],
+    }
+  },
+  { id:'act3', time:'~5:15', lbl:'Act III', sub:'Breath · Iki', k:'息', col:'#3d6e50', isInter:false,
+    rooms:['pool','corridor'], flows:[], dots:['gd-pool'], incense:true, sand:false, corridor:true,
+    info:{eye:'~5:15 PM · Act III · 息 Iki',title:'Breath',sub:'The Hinge · Course 05 · The Drop',
+      quote:'"In the space between two breaths — all things become possible."',
+      what:'New Flame lights the Act III incense. The Ma sorbet clears the body. <strong>The Drop</strong> — VIVĀRA Aether Drop in warm tulsi water — is delivered in the CORRIDOR between acts. Not at the table. Not announced. The hinge of the evening.',
+      courses:[
+        {n:'05',name:'Interval · Ma',sub:'Yuzu + green shiso sorbet · Tulsi granita crust · Saffron-thread bubble · The smell before the taste is the course'},
+      ],
+      dirs:['Incense: White Sage · Eucalyptus · Hinoki (clarity, expansion)','THE DROP: warm tulsi water + Aether Drop served in the corridor — not at table','Chuck speaks to the Ayurvedic sourcing at altitude — deepest product story','Energy now fully alive: laughter, shared reflections, new friendships'],
+      incense:'White Sage · Eucalyptus · Hinoki'
+    }
+  },
+  { id:'inter3', time:'', lbl:'Inter III', sub:'The Corridor', k:'', col:'#c4963d', isInter:true,
+    rooms:['room1','haptic'], flows:['fl-p1','fl-ph'], dots:['gd-r1','gd-hap'], incense:true, sand:true, corridor:true,
+    info:{eye:'Intermission III · After Act III',title:'The Corridor Continues',sub:'Room 1 · Electronic current rising · Haptic Rotation 3',
+      quote:'"A flow state of the senses."',
+      what:'Energy is building. Notebooks filling with stories. The evening has the quality of a sustained qi gong practice. Elijah\'s set continues to evolve. Haptic Rotation 3 prioritises all remaining guests.',
+      dirs:['Room 1: synthesizer now leads alongside tambor — pillar breathes faster','Orbseer visuals respond to growing complexity','Haptic Rotation 3: all remaining guests prioritised — everyone should attend before Act IV'],
+    }
+  },
+  { id:'act4', time:'~6:15', lbl:'Act IV', sub:'Fire · Hi', k:'火', col:'#8a2c10', isInter:false,
+    rooms:['pool'], flows:[], dots:['gd-pool'], incense:true, sand:false, corridor:false,
+    info:{eye:'~6:15 PM · Act IV · 火 Hi',title:'Fire',sub:'Transformation · Main Course · 06–07',
+      quote:'"To be changed, something must be willing to burn."',
+      what:'The final Flame (4 guests) light Dragon\'s Blood, Amber, Frankincense — the heaviest, most transformative incense of the ceremony. Chuck performs binchotan char tableside — saffron-smoke fills the room before anyone tastes.',
+      courses:[
+        {n:'06',name:'The Offering · A5 Wagyu',sub:'Dry-aged 45 days · Shilajit bone marrow lacquer · "What are you ready for?" asked before each piece is cooked'},
+        {n:'07',name:'Ash & Ember',sub:'Charred burdock · turnip · sweet potato · Saffron miso glaze pre-char · Binchotan smoke tableside'},
+      ],
+      dirs:['Incense: Dragon\'s Blood · Amber · Frankincense','Confirm binchotan smoke ventilation with venue','Shilajit lacquer = most visceral product moment of the evening','Chuck needs kitchen hands for Act IV — most complex plating'],
+      incense:"Dragon's Blood · Amber · Frankincense"
+    }
+  },
+  { id:'inter4', time:'', lbl:'Inter IV · Peak', sub:'Room 1 Climax', k:'', col:'#8a2c10', isInter:true,
+    rooms:['room1','haptic'], flows:['fl-p1','fl-ph'], dots:['gd-r1','gd-hap'], incense:true, sand:true, corridor:true,
+    info:{eye:'Intermission IV · The Peak',title:'Room 1 · Visual-Sonic Climax',sub:'Elijah × Orbseer at full power',
+      quote:'"The visual-sonic peak of the evening."',
+      what:'<strong>The most energetically charged moment.</strong> Fire drives the music and visuals. The synthesizer is fully alive. The LED pillar pulses, fractures, expands. Final Haptic rotation — any remaining guests + optional repeats.',
+      dirs:['Room 1: full electronic set — LED pillar at maximum','Orbseer: pulsing, fracturing, expanding — the peak','Final Haptic Rotation: remaining guests + optional repeat visitors','Duration: 10–12 minutes'],
+    }
+  },
+  { id:'act5', time:'~7:30', lbl:'Act V', sub:'Ether · Sora', k:'空', col:'#3e2e78', isInter:false,
+    rooms:['pool'], flows:['fl-eli'], dots:['gd-pool'], incense:true, sand:false, corridor:false,
+    info:{eye:'~7:30 PM · Act V · 空 Sora',title:'Ether',sub:'The Communion · Courses 08–09',
+      quote:'"You came as individuals. You leave as something larger."',
+      what:'Before final courses, the ceremony pauses for shared reflection — a word, a memory, an image. Elijah <strong>returns to the Pool</strong> for a final 1–2 songs. The full menu is revealed — guests compare their washi notebook against reality.',
+      courses:[
+        {n:'08',name:"Ancestor's Sweet",sub:'Date + black sesame + Shilajit · Matcha kuzu kiri · Saffron cipher chocolate (hold on tongue — receive it)'},
+        {n:'09',name:'Ceremonial Cacao',sub:'Cacao · honey · Tulsi tincture · Saffron · Shilajit 100mg · Three swallows. Past → Present → Becoming.'},
+      ],
+      dirs:['Incense: Jasmine · Neroli · Palo Santo','Elijah returns to Pool — closes the sonic arc, energy moves inward','Menu reveal: guests compare journal with the actual courses','Washi notebook = ceremony relic to keep'],
+      incense:'Jasmine · Neroli · Ceremonial Palo Santo'
+    }
+  },
+  { id:'closing', time:'8:30', lbl:'Closing', sub:'Three-Breath Rite', k:'', col:'#c4963d', isInter:false,
+    rooms:['pool'], flows:[], dots:['gd-pool'], incense:false, sand:false, corridor:false,
+    info:{eye:'8:30 PM · Closing Procession',title:'The Covenant',sub:'Gratitude · Meditation · Departure',
+      quote:'"On the third breath — silence. A held moment."',
+      what:'Chuck, Yuto, and Austin share what the evening revealed to them. Artists and partners thanked by name. The Three-Breath Rite closes the ceremony guided by a single voice — one breath for Past, one for Present, one for Becoming.',
+      dirs:['Three-Breath Rite: one breath per temporal dimension — Past · Present · Becoming','Each breath accompanied by a low sustained tone from Elijah','Third breath: silence. A held moment. The ceremony completes itself.','Guests receive sealed vial of Aether Drop Element 003 (TBC)','Washi notebooks closed and kept'],
+    }
+  },
+  { id:'communion', time:'9:00', lbl:'Communion', sub:'Sound + Movement', k:'', col:'#c4963d', isInter:false,
+    rooms:['pool','room1'], flows:['fl-p1','fl-1p'], dots:['gd-pool','gd-r1'], incense:false, sand:false, corridor:false,
+    info:{eye:'9:00 PM · Post-Ceremony',title:'Communion',sub:'Sound · Movement · Digestion',
+      quote:'"Movement as integration. Sound as medicine."',
+      what:'Elijah connects USB to mixer. The ceremony opens into free grounded communion. Audio-reactive visuals remain live in Room 1. Guests move freely between Pool and Room 1 — dancing, talking, digesting in grounded unison.',
+      dirs:['Elijah\'s post-ceremony set: electronic, hypnotic, rooted','Room 1 visuals: most liberated state of the evening','Light drinks: wine, ceremonial tea, or tulsi sparkling water','Bus departs 10:00–11:00 PM'],
+    }
+  },
+];
+
+/* ══════════════════════════════════════════════════
+   STATE
+══════════════════════════════════════════════════ */
+let cur = 0;
+let timer = null;
+let isPlaying = false;
+
+/* ══════════════════════════════════════════════════
+   ROOM COLOR MAPS
+══════════════════════════════════════════════════ */
+const COLS = {
+  '#7a5828':{ fill:'rgba(122,88,40,.12)', hi:'rgba(122,88,40,.2)', stroke:'rgba(200,152,58,.55)' },
+  '#1e4e6e':{ fill:'rgba(30,78,110,.13)',  hi:'rgba(30,78,110,.22)', stroke:'rgba(80,158,218,.5)' },
+  '#3d6e50':{ fill:'rgba(61,110,80,.12)', hi:'rgba(61,110,80,.2)',  stroke:'rgba(100,188,128,.5)' },
+  '#8a2c10':{ fill:'rgba(138,44,16,.14)', hi:'rgba(138,44,16,.24)', stroke:'rgba(218,78,38,.5)'  },
+  '#3e2e78':{ fill:'rgba(62,46,120,.12)', hi:'rgba(62,46,120,.2)',  stroke:'rgba(138,108,218,.5)' },
+  '#c4963d':{ fill:'rgba(196,150,61,.1)', hi:'rgba(196,150,61,.18)',stroke:'rgba(196,150,61,.55)' },
+};
+
+/* ══════════════════════════════════════════════════
+   BUILD TIMELINE
+══════════════════════════════════════════════════ */
+function buildTL(){
+  const track = document.getElementById('tl-track');
+  S.forEach((s,i) => {
+    const el = document.createElement('div');
+    el.className = 'tl-step' + (s.isInter ? ' is-inter' : '');
+    el.id = 'tl-' + s.id;
+    el.style.setProperty('--step-col', s.col);
+    el.innerHTML =
+      '<div class="tl-step__time">'+(s.time||'·')+'</div>'+
+      '<div class="tl-step__kanji">'+(s.k||'·')+'</div>'+
+      '<div class="tl-step__label">'+s.lbl+'</div>'+
+      '<div class="tl-step__sub">'+s.sub+'</div>';
+    el.addEventListener('click', () => goTo(i));
+    track.appendChild(el);
+  });
+}
+
+/* ══════════════════════════════════════════════════
+   APPLY STEP TO FLOOR PLAN
+══════════════════════════════════════════════════ */
+function applyStep(s) {
+  const c = COLS[s.col] || COLS['#c4963d'];
+
+  // ── Rooms ──
+  // Pool
+  const pool = document.getElementById('rm-pool');
+  if (s.rooms.includes('pool')) {
+    pool.classList.add('active');
+    pool.style.setProperty('--room-fill', c.fill);
+    pool.style.setProperty('--room-fill-hi', c.hi);
+    pool.style.setProperty('--room-stroke', c.stroke);
+  } else {
+    pool.classList.remove('active');
+  }
+
+  // Room 1
+  const r1 = document.getElementById('rm-r1');
+  ['pillar-o','pillar-m','pillar-i'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (s.rooms.includes('room1')) el.classList.add('active');
+    else el.classList.remove('active');
+  });
+  if (s.rooms.includes('room1')) {
+    r1.classList.add('active');
+    r1.style.setProperty('--room-fill', c.fill);
+    r1.style.setProperty('--room-fill-hi', c.hi);
+    r1.style.setProperty('--room-stroke', c.stroke);
+  } else {
+    r1.classList.remove('active');
+  }
+
+  // Haptic (rooms 5 + 6)
+  ['rm-r5','rm-r6'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (s.rooms.includes('haptic')) {
+      el.classList.add('active');
+      el.style.setProperty('--room-fill', c.fill);
+      el.style.setProperty('--room-fill-hi', c.hi);
+      el.style.setProperty('--room-stroke', c.stroke);
+    } else {
+      el.classList.remove('active');
+    }
+  });
+
+  // Corridor
+  const corr = document.getElementById('rm-corridor');
+  if (s.corridor) corr.classList.add('active');
+  else corr.classList.remove('active');
+
+  // ── Flows ──
+  ['fl-p1','fl-1p','fl-ph','fl-hp','fl-arr','fl-eli','fl-com'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('vis');
+  });
+  s.flows.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.add('vis');
+  });
+
+  // ── Glow dots ──
+  ['gd-pool','gd-r1','gd-hap','gd-ent'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.classList.remove('vis'); el.setAttribute('fill', 'rgba(196,150,61,.7)'); }
+  });
+  s.dots.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.classList.add('vis'); el.setAttribute('fill', s.col); }
+  });
+
+  // ── Incense ──
+  ['inc-tl','inc-tr','inc-bl','inc-br'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { if (s.incense) el.classList.add('vis'); else el.classList.remove('vis'); }
+  });
+
+  // ── Haptic sand ──
+  const sand = document.getElementById('h-sand');
+  if (sand) { if (s.sand) sand.classList.add('vis'); else sand.classList.remove('vis'); }
+
+  // ── Entry arrow ──
+  const ea = document.getElementById('entry-arrow');
+  if (ea) ea.style.opacity = s.id === 'arrival' ? '1' : '0';
+
+  // ── Room labels ──
+  ['lbl-n1','lbl-r1','lbl-n5','lbl-n6','lbl-h'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.classList.remove('active'); el.style.setProperty('--lbl-col', s.col); }
+  });
+  if (s.rooms.includes('room1')) {
+    ['lbl-n1','lbl-r1'].forEach(id => { const el=document.getElementById(id); if(el) el.classList.add('active'); });
+  }
+  if (s.rooms.includes('haptic')) {
+    ['lbl-n5','lbl-n6','lbl-h'].forEach(id => { const el=document.getElementById(id); if(el) el.classList.add('active'); });
+  }
+
+  // ── Info panel ──
+  updateInfo(s);
+}
+
+/* ══════════════════════════════════════════════════
+   INFO PANEL
+══════════════════════════════════════════════════ */
+function updateInfo(s) {
+  const info = s.info;
+  const panel = document.getElementById('info-panel');
+  panel.style.setProperty('--step-col', s.col);
+
+  document.getElementById('i-eye').textContent   = info.eye;
+  document.getElementById('i-title').textContent = info.title;
+  document.getElementById('i-sub').textContent   = info.sub;
+  document.getElementById('i-kanji').textContent = s.k || '';
+  document.getElementById('i-bar').style.background = s.col;
+
+  const nameMap = { pool:'The Pool', room1:'Room 1 · LED Pillar', haptic:'Room 5/6 · Haptic', entry:'Entry', corridor:'The Corridor' };
+
+  let h = '';
+
+  // Active spaces
+  if (s.rooms.length) {
+    h += '<div><div class="sec-lbl">Active Spaces</div><div class="room-tags">' +
+      s.rooms.map(r => '<div class="room-tag on">' + (nameMap[r]||r) + '</div>').join('') +
+      (s.flows.length ? '<div class="room-tag">Flow active</div>' : '') +
+      '</div></div>';
+  }
+
+  // Quote
+  if (info.quote) h += '<div class="quote">'+info.quote+'</div>';
+
+  // Courses
+  if (info.courses && info.courses.length) {
+    h += '<div><div class="sec-lbl">Courses</div><div class="courses">' +
+      info.courses.map(c =>
+        '<div class="course"><div class="c-num">'+c.n+'</div>' +
+        '<div class="c-name">'+c.name+'</div>' +
+        '<div class="c-sub">'+c.sub+'</div></div>'
+      ).join('') + '</div></div>';
+  }
+
+  // What
+  if (info.what) h += '<div><div class="sec-lbl">Ceremony Notes</div><div class="what">'+info.what+'</div></div>';
+
+  // Directives
+  if (info.dirs && info.dirs.length) {
+    h += '<div><div class="sec-lbl">Directives</div><div class="dirs">' +
+      info.dirs.map(d =>
+        '<div class="dir"><div class="dir-m">↳</div><div>'+d+'</div></div>'
+      ).join('') + '</div></div>';
+  }
+
+  // Incense
+  if (info.incense) h += '<div class="incense-lbl">'+info.incense+'</div>';
+
+  document.getElementById('i-body').innerHTML = h;
+  // Scroll info back to top
+  const scr = document.querySelector('.info-scroll');
+  if (scr) scr.scrollTop = 0;
+}
+
+/* ══════════════════════════════════════════════════
+   NAVIGATION
+══════════════════════════════════════════════════ */
+function goTo(i) {
+  cur = Math.max(0, Math.min(S.length - 1, i));
+
+  // Update timeline
+  document.querySelectorAll('.tl-step').forEach((el, idx) => {
+    el.classList.toggle('active', idx === cur);
+    el.style.setProperty('--step-col', S[idx].col);
+  });
+
+  // Scroll active step into view
+  const activeTl = document.getElementById('tl-' + S[cur].id);
+  if (activeTl) activeTl.scrollIntoView({ behavior:'smooth', block:'nearest', inline:'center' });
+
+  applyStep(S[cur]);
+
+  // Prev / Next button states
+  document.getElementById('btn-prev').disabled = (cur === 0);
+  document.getElementById('btn-next').disabled = (cur === S.length - 1);
+
+  // On mobile: gently scroll info into partial view
+  setTimeout(nudgeInfoVisible, 80);
+}
+
+function stepBy(delta) { goTo(cur + delta); }
+
+/* ── Mobile: after step change, nudge page so info top is visible ── */
+function nudgeInfoVisible() {
+  if (window.innerWidth > 720) return;
+  const info = document.getElementById('info-panel');
+  if (!info) return;
+  // Only nudge if info panel is below the fold after a user interaction
+  const rect = info.getBoundingClientRect();
+  const tlH = document.querySelector('.tl-wrap') ?
+    document.querySelector('.tl-wrap').getBoundingClientRect().bottom : 0;
+  if (rect.top > window.innerHeight * 0.6) {
+    // Scroll so the info panel top is ~60% down from visible top
+    const target = window.scrollY + rect.top - (window.innerHeight * 0.52);
+    window.scrollTo({ top: Math.max(0, target), behavior: 'smooth' });
+  }
+}
+
+/* ══════════════════════════════════════════════════
+   PLAY — self-contained, no globals needed
+══════════════════════════════════════════════════ */
+function startPlay() {
+  if (isPlaying) return;
+  isPlaying = true;
+  const btn = document.getElementById('btn-play');
+  btn.textContent = '◼ Stop';
+  btn.classList.add('playing');
+  // If at the end, restart from beginning
+  if (cur >= S.length - 1) goTo(0);
+  timer = setInterval(function() {
+    if (cur >= S.length - 1) {
+      stopPlay();
+    } else {
+      goTo(cur + 1);
+    }
+  }, 2800);
+}
+
+function stopPlay() {
+  isPlaying = false;
+  if (timer) { clearInterval(timer); timer = null; }
+  const btn = document.getElementById('btn-play');
+  btn.textContent = '▷ Play';
+  btn.classList.remove('playing');
+}
+
+function togglePlay() {
+  if (isPlaying) stopPlay();
+  else startPlay();
+}
+
+/* ══════════════════════════════════════════════════
+   ROOM CLICK HANDLERS
+══════════════════════════════════════════════════ */
+function setupClicks() {
+  // Pool → jump to first act using pool
+  const pool = document.getElementById('rm-pool');
+  if (pool) pool.addEventListener('click', function() {
+    const i = S.findIndex(s => s.rooms.includes('pool') && !s.isInter && s.id !== 'arrival' && s.id !== 'opening');
+    goTo(i >= 0 ? i : 2);
+  });
+
+  // Room 1 → jump to first intermission
+  const r1 = document.getElementById('rm-r1');
+  if (r1) r1.addEventListener('click', function() {
+    const i = S.findIndex(s => s.rooms.includes('room1') && s.isInter);
+    goTo(i >= 0 ? i : 3);
+  });
+
+  // Haptic rooms → jump to first haptic intermission
+  ['rm-r5','rm-r6'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('click', function() {
+      const i = S.findIndex(s => s.rooms.includes('haptic'));
+      goTo(i >= 0 ? i : 3);
+    });
+  });
+}
+
+/* ══════════════════════════════════════════════════
+   BUTTON EVENT LISTENERS (no inline onclick)
+══════════════════════════════════════════════════ */
+document.getElementById('btn-prev').addEventListener('click', function() { stepBy(-1); });
+document.getElementById('btn-next').addEventListener('click', function() { stepBy(1); });
+document.getElementById('btn-play').addEventListener('click', togglePlay);
+
+/* ══════════════════════════════════════════════════
+   INIT
+══════════════════════════════════════════════════ */
+buildTL();
+setupClicks();
+goTo(0);
+</script>
+</body>
+</html>

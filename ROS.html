@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>VIVĀRA · Run of Ceremony · Tokyo · 29 April</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Tenor+Sans&family=EB+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
+<style>
+/* ═══════════════════════════════ TOKENS ═══ */
+:root{
+  --black:#070707;--deep:#0d0d0d;--surface:#111111;
+  --border:rgba(255,255,255,.08);--border-light:rgba(255,255,255,.14);
+  --white:#f5f0eb;--muted:rgba(245,240,235,.45);--dim:rgba(245,240,235,.25);
+  --gold:#c9a96e;--gold-dim:rgba(201,169,110,.35);--gold-glow:rgba(201,169,110,.08);
+  --act1:#8a6a3a;--act2:#2a5a7a;--act3:#4a7a5a;--act4:#9a3a1a;--act5:#5a4a8a;
+  --nav-h:52px;
+  --px:clamp(20px,5vw,40px);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+
+/* ═══ SCROLL SNAP ═══════════════════════════
+   proximity = snaps when near a boundary but
+   never traps inside long-content sections.   */
+html{
+  scroll-behavior:smooth;
+  scroll-snap-type:y proximity;
+  overflow-y:scroll;
+  height:100%;
+}
+body{
+  background:var(--black);color:var(--white);
+  font-family:'Tenor Sans',sans-serif;
+  font-size:clamp(13px,1.8vw,14px);
+  line-height:1.7;letter-spacing:.02em;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;min-height:100%;
+}
+
+/* ═══ GRAIN — slow breath ═══════════════════ */
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:9999;
+  animation:grainBreathe 9s ease-in-out infinite;
+}
+@keyframes grainBreathe{0%,100%{opacity:.5}50%{opacity:.8}}
+
+/* ═══ KEYFRAMES ═════════════════════════════ */
+@keyframes goldPulse{0%,100%{opacity:.45}50%{opacity:1}}
+@keyframes breathe{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.007);opacity:.85}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+
+/* ═══ REVEAL (IntersectionObserver) ════════ */
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .7s cubic-bezier(.25,.46,.45,.94),transform .7s cubic-bezier(.25,.46,.45,.94);}
+.reveal.visible{opacity:1;transform:translateY(0);}
+.rd1{transition-delay:.1s}.rd2{transition-delay:.2s}.rd3{transition-delay:.3s}.rd4{transition-delay:.4s}
+
+/* ═══ SCROLLBAR ═════════════════════════════ */
+::-webkit-scrollbar{width:2px}
+::-webkit-scrollbar-track{background:var(--black)}
+::-webkit-scrollbar-thumb{background:var(--gold-dim);border-radius:2px}
+
+/* ═══ TYPOGRAPHY ════════════════════════════ */
+em{font-family:'EB Garamond',serif;font-style:italic;color:var(--gold);}
+
+/* ═══ SNAP ANCHOR — attach to big blocks ═══ */
+.snap{scroll-snap-align:start;scroll-snap-stop:normal;}
+
+/* ═══ RULES ═════════════════════════════════ */
+.rule{width:100%;height:1px;background:var(--border);}
+.rule--gold{background:linear-gradient(90deg,transparent,var(--gold-dim),transparent);animation:goldPulse 6s ease-in-out infinite;}
+
+/* ═══ NAV ═══════════════════════════════════ */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  background:rgba(7,7,7,.93);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--border);height:var(--nav-h);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 var(--px);
+  padding-left:max(var(--px),env(safe-area-inset-left));
+  padding-right:max(var(--px),env(safe-area-inset-right));
+}
+.nav__brand{font-family:'Cormorant Garamond',serif;font-size:16px;letter-spacing:.3em;text-transform:uppercase;flex-shrink:0;}
+.nav__links{display:flex;gap:clamp(10px,2.5vw,28px);list-style:none;}
+.nav__links a{font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .2s;white-space:nowrap;}
+.nav__links a:hover,.nav__links a.active{color:var(--gold);}
+.nav__date{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);white-space:nowrap;flex-shrink:0;}
+.confidential{display:inline-block;border:1px solid var(--border-light);padding:2px 7px;font-size:7px;letter-spacing:.22em;text-transform:uppercase;color:var(--dim);vertical-align:middle;margin-left:6px;}
+
+/* ═══ INNER WRAPPER ══════════════════════════ */
+.inner{max-width:980px;margin:0 auto;padding:0 var(--px);}
+
+/* ═══ COVER ═════════════════════════════════ */
+.cover{
+  min-height:100svh;display:flex;flex-direction:column;
+  justify-content:center;align-items:flex-start;
+  padding:calc(var(--nav-h) + 48px) var(--px) 80px;
+  max-width:980px;margin:0 auto;position:relative;
+  scroll-snap-align:start;
+}
+.cover__eyebrow{font-size:9px;letter-spacing:.4em;text-transform:uppercase;color:var(--gold);margin-bottom:clamp(24px,4vw,48px);display:flex;align-items:center;gap:18px;animation:fadeUp .8s ease both .2s;}
+.cover__eyebrow::before{content:'';display:block;width:36px;height:1px;background:var(--gold);animation:goldPulse 5s ease-in-out infinite;}
+.cover__title{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(60px,17vw,130px);letter-spacing:.12em;text-transform:uppercase;line-height:.9;margin-bottom:14px;animation:fadeUp .8s ease both .4s;}
+.cover__title span{display:block;color:var(--gold);font-size:.35em;letter-spacing:.4em;margin-top:10px;}
+.cover__subtitle{font-family:'EB Garamond',serif;font-style:italic;font-size:clamp(15px,2.8vw,20px);color:var(--muted);margin-bottom:clamp(32px,5vw,60px);max-width:560px;line-height:1.55;animation:fadeUp .8s ease both .6s;}
+.cover__meta{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--border-light);width:100%;animation:fadeUp .8s ease both .8s;}
+.cover__meta-item{padding:clamp(9px,1.5vw,14px) clamp(10px,2.5vw,24px);border-right:1px solid var(--border-light);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);}
+.cover__meta-item:nth-child(3n){border-right:none;}
+.cover__meta-item:nth-child(n+4){border-top:1px solid var(--border-light);}
+.cover__meta-item strong{display:block;color:var(--white);font-weight:400;font-size:clamp(11px,2.2vw,13px);letter-spacing:.08em;margin-bottom:3px;font-family:'Cormorant Garamond',serif;}
+.cover__scroll-hint{position:absolute;bottom:max(28px,env(safe-area-inset-bottom,28px));left:var(--px);font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:var(--dim);display:flex;align-items:center;gap:12px;animation:fadeUp 1s ease both 1.2s;}
+.cover__scroll-hint::after{content:'';display:block;width:36px;height:1px;background:var(--dim);animation:breathe 3.5s ease-in-out infinite;}
+
+/* ═══ SECTION ════════════════════════════════ */
+.section{padding:clamp(44px,7vw,80px) var(--px);max-width:980px;margin:0 auto;scroll-snap-align:start;}
+.section-label{font-size:9px;letter-spacing:.35em;text-transform:uppercase;color:var(--gold);margin-bottom:18px;display:flex;align-items:center;gap:14px;}
+.section-label::after{content:'';flex:1;height:1px;background:var(--border);}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(30px,5.5vw,58px);letter-spacing:.08em;text-transform:uppercase;line-height:1.05;margin-bottom:22px;}
+.section-intro{font-family:'EB Garamond',serif;font-size:clamp(15px,2.4vw,18px);color:var(--muted);max-width:680px;line-height:1.75;margin-bottom:36px;}
+
+/* ═══ PHILOSOPHY ════════════════════════════ */
+.philosophy-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:44px;}
+.philosophy-cell{background:var(--black);padding:clamp(22px,3.5vw,36px) clamp(16px,2.5vw,28px);}
+.philosophy-cell__kanji{font-family:'EB Garamond',serif;font-size:clamp(30px,5vw,42px);color:var(--gold-dim);margin-bottom:10px;display:block;animation:breathe 8s ease-in-out infinite;}
+.philosophy-cell__title{font-family:'Cormorant Garamond',serif;font-size:15px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:8px;}
+.philosophy-cell__body{font-family:'EB Garamond',serif;font-size:clamp(13px,2vw,15px);color:var(--muted);line-height:1.65;}
+
+/* ═══ PRODUCT NOTE ══════════════════════════ */
+.product-note{border:1px solid var(--gold-dim);background:var(--gold-glow);padding:clamp(14px,2.5vw,20px) clamp(14px,2.5vw,24px);margin:18px 0;}
+.product-note-label{font-size:8px;letter-spacing:.35em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;}
+.product-note-body{font-family:'EB Garamond',serif;font-size:clamp(13px,2vw,14px);color:var(--muted);line-height:1.7;}
+
+/* ═══ VENUE ══════════════════════════════════ */
+.venue-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:44px;}
+.venue-card{border:1px solid var(--border-light);padding:clamp(18px,3vw,32px) clamp(14px,2.5vw,24px);position:relative;transition:border-color .3s;}
+.venue-card:hover{border-color:var(--gold-dim);}
+.venue-card::before{content:attr(data-num);position:absolute;top:-1px;right:14px;font-family:'Cormorant Garamond',serif;font-size:clamp(40px,5.5vw,64px);font-weight:300;color:var(--gold-dim);line-height:1;pointer-events:none;}
+.venue-card__label{font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);margin-bottom:9px;}
+.venue-card__name{font-family:'Cormorant Garamond',serif;font-size:clamp(17px,2.5vw,22px);letter-spacing:.12em;text-transform:uppercase;margin-bottom:9px;}
+.venue-card__desc{font-size:13px;color:var(--muted);line-height:1.65;}
+
+/* ═══ TEAM ═══════════════════════════════════ */
+.team-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:44px;}
+.team-member{background:var(--black);padding:clamp(18px,2.5vw,28px) clamp(12px,2vw,20px);}
+.team-member__role{font-size:8px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);margin-bottom:7px;}
+.team-member__name{font-family:'Cormorant Garamond',serif;font-size:clamp(15px,2.2vw,18px);letter-spacing:.1em;margin-bottom:5px;}
+.team-member__archetype{font-family:'EB Garamond',serif;font-style:italic;font-size:12px;color:var(--gold);margin-bottom:8px;}
+.team-member__desc{font-size:12px;color:var(--muted);line-height:1.6;}
+.note{padding:13px 17px;border-left:2px solid var(--border-light);font-size:12px;color:var(--muted);line-height:1.65;font-family:'EB Garamond',serif;font-style:italic;}
+
+/* ═══ DIVIDER ════════════════════════════════ */
+.divider{display:flex;align-items:center;gap:18px;margin:36px 0;color:var(--dim);font-size:9px;letter-spacing:.28em;text-transform:uppercase;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* ═══ TIMELINE WRAPPER ══════════════════════ */
+.timeline-wrapper{max-width:980px;margin:0 auto;padding:0 var(--px) 72px;scroll-snap-align:start;}
+.timeline{position:relative;}
+.timeline::before{content:'';position:absolute;left:108px;top:0;bottom:0;width:1px;background:linear-gradient(to bottom,transparent,var(--border-light) 8%,var(--border-light) 92%,transparent);}
+.timeline-entry{display:grid;grid-template-columns:108px 1fr;gap:0;position:relative;margin-bottom:2px;}
+.timeline-time{padding:28px 20px 28px 0;text-align:right;font-family:'Cormorant Garamond',serif;font-size:13px;letter-spacing:.06em;color:var(--muted);align-self:start;padding-top:30px;position:relative;}
+.timeline-time::after{content:'';position:absolute;right:-5px;top:38px;width:9px;height:9px;border-radius:50%;border:1px solid var(--border-light);background:var(--black);}
+.timeline-time.act-marker::after{background:var(--gold);border-color:var(--gold);width:11px;height:11px;right:-6px;top:37px;box-shadow:0 0 14px var(--gold-dim);animation:goldPulse 4s ease-in-out infinite;}
+.timeline-body{padding:17px 0 17px 34px;border-bottom:1px solid var(--border);}
+.timeline-entry:last-child .timeline-body{border-bottom:none;}
+
+/* ═══ ACT BLOCKS ════════════════════════════ */
+.act-block{border:1px solid var(--border-light);background:var(--surface);position:relative;overflow:hidden;}
+.act-block::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.act-block[data-act="I"]::before{background:linear-gradient(90deg,var(--act1),transparent);}
+.act-block[data-act="II"]::before{background:linear-gradient(90deg,var(--act2),transparent);}
+.act-block[data-act="III"]::before{background:linear-gradient(90deg,var(--act3),transparent);}
+.act-block[data-act="IV"]::before{background:linear-gradient(90deg,var(--act4),transparent);}
+.act-block[data-act="V"]::before{background:linear-gradient(90deg,var(--act5),transparent);}
+.act-header{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px;padding:clamp(14px,2.5vw,24px) clamp(14px,2.5vw,28px);border-bottom:1px solid var(--border);}
+.act-kanji{font-family:'EB Garamond',serif;font-size:clamp(32px,5.5vw,52px);line-height:1;color:var(--gold-dim);opacity:.7;animation:breathe 9s ease-in-out infinite;}
+.act-number{font-size:8px;letter-spacing:.33em;text-transform:uppercase;color:var(--gold);margin-bottom:4px;}
+.act-title{font-family:'Cormorant Garamond',serif;font-size:clamp(16px,3vw,26px);font-weight:300;letter-spacing:.15em;text-transform:uppercase;}
+.act-incense{font-size:11px;letter-spacing:.12em;color:var(--muted);text-align:right;font-family:'EB Garamond',serif;font-style:italic;min-width:0;}
+.act-incense strong{display:block;font-style:normal;font-size:8px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);margin-bottom:3px;font-family:'Tenor Sans',sans-serif;}
+.act-quote{font-family:'EB Garamond',serif;font-style:italic;font-size:clamp(13px,2.2vw,16px);color:var(--muted);line-height:1.65;border-left:2px solid var(--gold-dim);margin:18px clamp(14px,2.5vw,28px) 0;padding:14px clamp(14px,2.5vw,20px);}
+.act-body{padding:clamp(14px,2.5vw,24px) clamp(14px,2.5vw,28px);}
+
+/* ═══ COURSES ═══════════════════════════════ */
+.courses{display:flex;flex-direction:column;gap:14px;margin-bottom:18px;}
+.course{display:grid;grid-template-columns:26px 1fr;gap:12px;align-items:start;}
+.course-num{font-family:'Cormorant Garamond',serif;font-size:13px;color:var(--gold);letter-spacing:.1em;padding-top:2px;}
+.course-name{font-family:'Cormorant Garamond',serif;font-size:clamp(13px,2.2vw,16px);letter-spacing:.1em;text-transform:uppercase;margin-bottom:3px;}
+.course-sub{font-size:11px;color:var(--muted);font-family:'EB Garamond',serif;font-style:italic;line-height:1.55;}
+.course-ritual{font-size:11px;color:var(--gold);margin-top:4px;letter-spacing:.04em;line-height:1.5;}
+
+/* ═══ DIRECTIVES ════════════════════════════ */
+.directives{display:flex;flex-direction:column;gap:8px;margin-top:14px;}
+.directive{display:flex;gap:10px;align-items:flex-start;font-size:12px;color:var(--muted);line-height:1.6;}
+.directive-icon{flex-shrink:0;width:17px;height:17px;border:1px solid var(--border-light);display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--gold);margin-top:2px;}
+
+/* ═══ INTERMISSION ══════════════════════════ */
+.intermission{background:var(--deep);border:1px solid var(--border);border-left:2px solid var(--gold-dim);padding:clamp(14px,2.5vw,20px) clamp(14px,2.5vw,24px);margin-top:18px;}
+.intermission-label{font-size:8px;letter-spacing:.33em;text-transform:uppercase;color:var(--gold);margin-bottom:7px;}
+.intermission-title{font-family:'Cormorant Garamond',serif;font-size:clamp(15px,2.5vw,18px);letter-spacing:.1em;text-transform:uppercase;margin-bottom:9px;}
+.intermission-body{font-size:12px;color:var(--muted);line-height:1.7;}
+
+/* ═══ FLAME ══════════════════════════════════ */
+.flame-ritual{background:linear-gradient(135deg,rgba(201,169,110,.06),transparent);border:1px solid var(--gold-dim);padding:clamp(12px,2vw,16px) clamp(14px,2.5vw,20px);margin-top:14px;}
+.flame-ritual-label{font-size:8px;letter-spacing:.33em;text-transform:uppercase;color:var(--gold);margin-bottom:5px;}
+.flame-ritual-body{font-family:'EB Garamond',serif;font-size:clamp(12px,1.9vw,13px);color:var(--muted);line-height:1.65;}
+
+/* ═══ LOGISTICS ══════════════════════════════ */
+.logistics-entry{border:1px solid var(--border);padding:clamp(16px,2.5vw,24px) clamp(14px,2.5vw,28px);}
+.logistics-entry__time{font-family:'Cormorant Garamond',serif;font-size:clamp(20px,3.5vw,28px);letter-spacing:.08em;color:var(--gold);margin-bottom:4px;}
+.logistics-entry__title{font-family:'Cormorant Garamond',serif;font-size:clamp(13px,2.2vw,16px);letter-spacing:.15em;text-transform:uppercase;margin-bottom:9px;}
+.logistics-entry__body{font-size:13px;color:var(--muted);line-height:1.7;}
+.logistics-entry__body ul{list-style:none;margin-top:9px;}
+.logistics-entry__body ul li{padding:3px 0 3px 17px;position:relative;font-size:12px;line-height:1.6;}
+.logistics-entry__body ul li::before{content:'—';position:absolute;left:0;color:var(--gold-dim);font-size:10px;}
+
+/* ═══ SIGNATURE MOMENT ══════════════════════ */
+.signature-moment{border:1px solid var(--border-light);background:var(--surface);padding:clamp(22px,3.5vw,36px);text-align:center;position:relative;overflow:hidden;}
+.signature-moment::before{content:'◉';position:absolute;top:16px;left:50%;transform:translateX(-50%);font-size:8px;letter-spacing:8px;color:var(--gold-dim);animation:goldPulse 5s ease-in-out infinite;}
+.signature-moment-label{font-size:8px;letter-spacing:.38em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;margin-top:10px;}
+.signature-moment-title{font-family:'Cormorant Garamond',serif;font-size:clamp(32px,7vw,48px);font-weight:300;letter-spacing:.15em;text-transform:uppercase;margin-bottom:12px;animation:breathe 6s ease-in-out infinite;}
+.signature-moment-body{font-family:'EB Garamond',serif;font-style:italic;font-size:clamp(14px,2.3vw,18px);color:var(--muted);max-width:520px;margin:0 auto;line-height:1.7;}
+
+/* ═══ TAGS ═══════════════════════════════════ */
+.tag{display:inline-block;padding:3px 9px;border:1px solid var(--border-light);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-right:5px;margin-bottom:5px;}
+.tag--gold{border-color:var(--gold-dim);color:var(--gold);}
+
+/* ═══ CLOSING GRID ══════════════════════════ */
+.closing-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);margin-top:36px;}
+.closing-cell{background:var(--black);padding:clamp(22px,3.5vw,32px) clamp(16px,2.5vw,28px);}
+.closing-cell-label{font-size:8px;letter-spacing:.33em;text-transform:uppercase;color:var(--gold);margin-bottom:9px;}
+.closing-cell-title{font-family:'Cormorant Garamond',serif;font-size:clamp(17px,2.8vw,22px);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;}
+.closing-cell-body{font-family:'EB Garamond',serif;font-size:clamp(13px,2vw,15px);color:var(--muted);line-height:1.7;}
+
+/* ═══ FOOTER ══════════════════════════════ */
+.footer{border-top:1px solid var(--border);padding:clamp(24px,4vw,40px) var(--px);max-width:980px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:18px;padding-bottom:max(clamp(24px,4vw,40px),env(safe-area-inset-bottom));scroll-snap-align:start;}
+.footer__brand-name{font-family:'Cormorant Garamond',serif;font-size:20px;letter-spacing:.3em;text-transform:uppercase;margin-bottom:4px;}
+.footer__brand-sub{font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--dim);}
+.footer__meta{text-align:right;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);line-height:2;}
+.footer__conf{margin-top:7px;color:var(--border-light);}
+
+/* ═══════════════════════════════════════════
+   TABLET  ≤ 900px
+══════════════════════════════════════════ */
+@media(max-width:900px){
+  .nav__links{display:none;}
+  .team-grid{grid-template-columns:1fr 1fr;}
+  .venue-grid{grid-template-columns:1fr 1fr;gap:14px;}
+  .venue-grid .venue-card:last-child{grid-column:1/-1;}
+  /* Cover meta: 2-col */
+  .cover__meta{grid-template-columns:1fr 1fr;}
+  .cover__meta-item:nth-child(3n){border-right:1px solid var(--border-light);}
+  .cover__meta-item:nth-child(2n){border-right:none;}
+  .cover__meta-item:nth-child(n+3){border-top:1px solid var(--border-light);}
+}
+
+/* ═══════════════════════════════════════════
+   MOBILE  ≤ 640px
+══════════════════════════════════════════ */
+@media(max-width:640px){
+  :root{--px:20px;}
+
+  /* Cover meta: keep 2-col but shrink */
+  .cover__meta{grid-template-columns:1fr 1fr;}
+
+  /* Philosophy: stack */
+  .philosophy-grid{grid-template-columns:1fr;}
+  .philosophy-cell{border-bottom:1px solid var(--border);}
+  .philosophy-cell:last-child{border-bottom:none;}
+
+  /* Venue: stack */
+  .venue-grid{grid-template-columns:1fr;gap:12px;}
+  .venue-grid .venue-card:last-child{grid-column:1;}
+
+  /* Team: stack */
+  .team-grid{grid-template-columns:1fr;}
+
+  /* Timeline: collapse to single column */
+  .timeline::before{display:none;}
+  .timeline-entry{grid-template-columns:1fr;margin-bottom:0;}
+  .timeline-time{
+    text-align:left;padding:22px 0 5px;
+    font-size:11px;color:var(--gold);
+    border-top:1px solid var(--border);
+    letter-spacing:.12em;
+  }
+  .timeline-time::after{display:none;}
+  .timeline-time.act-marker{border-top:2px solid var(--gold);}
+  .timeline-body{padding:0 0 22px;border-bottom:none;}
+
+  /* Act header: stack incense row */
+  .act-header{grid-template-columns:auto 1fr;grid-template-rows:auto auto;}
+  .act-incense{grid-column:1/-1;text-align:left;border-top:1px solid var(--border);padding-top:10px;margin-top:4px;font-size:10px;}
+
+  /* Signature moment */
+  .signature-moment{padding:24px 18px;}
+
+  /* Closing grid */
+  .closing-grid{grid-template-columns:1fr;}
+
+  /* Footer */
+  .footer{flex-direction:column;align-items:flex-start;}
+  .footer__meta{text-align:left;}
+
+  /* Nav confidential label */
+  .confidential{display:none;}
+}
+
+/* ═══════════════════════════════════════════
+   VERY SMALL  ≤ 380px
+══════════════════════════════════════════ */
+@media(max-width:380px){
+  .cover__meta{grid-template-columns:1fr;}
+  .cover__meta-item{border-right:none !important;border-bottom:1px solid var(--border-light);}
+  .cover__meta-item:last-child{border-bottom:none;}
+  .nav__date{display:none;}
+}
+
+/* ═══ PRINT ══════════════════════════════════ */
+@media print{
+  html{scroll-snap-type:none;}
+  .nav,.cover__scroll-hint{display:none;}
+  body{background:#fff;color:#000;font-size:11px;}
+  body::before{display:none;}
+  .cover{min-height:auto;page-break-after:always;}
+  .act-block{page-break-inside:avoid;}
+  .rule--gold{animation:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ NAV ══════════════════════════════════════ -->
+<nav class="nav">
+  <div class="nav__brand">VIVĀRA</div>
+  <ul class="nav__links">
+    <li><a href="#philosophy">Philosophy</a></li>
+    <li><a href="#venue">Venue</a></li>
+    <li><a href="#team">The Artists</a></li>
+    <li><a href="#ceremony">Ceremony</a></li>
+    <li><a href="#closing">Closing</a></li>
+  </ul>
+  <div class="nav__date">29 · IV · 2025<span class="confidential">Confidential</span></div>
+</nav>
+
+<!-- ══ COVER ══════════════════════════════════ -->
+<section class="cover snap">
+  <div class="cover__eyebrow">Run of Ceremony · Working Document</div>
+  <h1 class="cover__title">VIVĀRA<span>Tokyo Release Dinner</span></h1>
+  <p class="cover__subtitle"><em>"Living Alchemy in Ancestral Futurism — connecting the senses through Past, Present &amp; Future."</em></p>
+  <div class="cover__meta">
+    <div class="cover__meta-item"><strong>29 April</strong>Date</div>
+    <div class="cover__meta-item"><strong>KRONOS · Chiba</strong>Venue</div>
+    <div class="cover__meta-item"><strong>1:30 PM → 11 PM</strong>Duration</div>
+    <div class="cover__meta-item"><strong>21 Guests</strong>Capacity</div>
+    <div class="cover__meta-item"><strong>Five Acts · Nine Courses</strong>Structure</div>
+    <div class="cover__meta-item"><strong>VIVARADROPS.COM</strong>Brand</div>
+  </div>
+  <div class="cover__scroll-hint">Scroll to descend</div>
+</section>
+
+<div class="rule rule--gold"></div>
+
+<!-- ══ PHILOSOPHY ═════════════════════════════ -->
+<section class="section snap" id="philosophy">
+  <div class="section-label reveal">The Foundation</div>
+  <h2 class="section-title reveal rd1">Philosophy &amp; Sacred Ingredients</h2>
+  <p class="section-intro reveal rd2">Shilajit is not a discovery. It is a <em>remembrance</em>. Formed over millions of years in Himalayan stone, VIVĀRA's Aether Drop — Element 003 — returns this geological intelligence to the body. Not as supplement. As ceremony. This evening is its first ritual enactment.</p>
+
+  <div class="philosophy-grid reveal rd3">
+    <div class="philosophy-cell">
+      <span class="philosophy-cell__kanji">I</span>
+      <div class="philosophy-cell__title">Shilajit</div>
+      <div class="philosophy-cell__body">Earth · Body · Geological Memory<br/><br/>Wild-crafted from the Karakoram Himalayas. Dissolved into each course as a thread of ancestral intelligence. The mineral foundation upon which all ceremony rests.</div>
+    </div>
+    <div class="philosophy-cell">
+      <span class="philosophy-cell__kanji">II</span>
+      <div class="philosophy-cell__title">Tulsi</div>
+      <div class="philosophy-cell__body">Breath · Mind · Sacred Adaptogen<br/><br/>The holy basil of Ayurvedic tradition. Woven through courses as cold-pressed oil, granita, and tincture. Present at the corridor passage — The Drop — the hinge of the night.</div>
+    </div>
+    <div class="philosophy-cell">
+      <span class="philosophy-cell__kanji">III</span>
+      <div class="philosophy-cell__title">Saffron</div>
+      <div class="philosophy-cell__body">Light · Mood · Alchemical Thread<br/><br/>Three threads visible in the first vessel. A bloom in the gold bowl. Smoke through binchotan char. Saffron is the visual language of transformation — the colour of ceremony itself.</div>
+    </div>
+  </div>
+
+  <div class="product-note reveal rd4">
+    <div class="product-note-label">Product · Element 003 · Aether Drop</div>
+    <div class="product-note-body">Throughout all five acts, the narrative of VIVĀRA's founding — the sourcing of shilajit from the Karakoram range, the Ayurvedic blend with tulsi and saffron, and the ritual of consumption through tea, warm water, and ceremony — will be woven into each course introduction by the founders. The product itself is the protagonist of the evening's story. <strong style="color:var(--white);font-family:'Cormorant Garamond',serif;font-style:normal;font-weight:400;">VIVARADROPS.COM</strong></div>
+  </div>
+</section>
+
+<div class="rule"></div>
+
+<!-- ══ VENUE ═══════════════════════════════════ -->
+<section class="section snap" id="venue">
+  <div class="section-label reveal">Spatial Architecture</div>
+  <h2 class="section-title reveal rd1">KRONOS · Chiba, Japan</h2>
+  <p class="section-intro reveal rd2">A multi-room venue conceived as a pilgrimage route. Seven rooms. One central Pool. Guests move, discover, descend. Three rooms are activated for this ceremony, each corresponding to a layer of sensory experience.</p>
+
+  <div class="venue-grid">
+    <div class="venue-card reveal rd1" data-num="⬤">
+      <div class="venue-card__label">Primary Space</div>
+      <div class="venue-card__name">The Pool</div>
+      <div class="venue-card__desc">The ritual heart. The culinary ceremony unfolds here across all five acts. Chef Chuck Achike presides — visible in graceful motion throughout the evening. Twenty-one guests seated at a single communal altar. Each seat holds a washi notebook and pen. Incense altars occupy all four corners. Scent changes with each act.</div>
+    </div>
+    <div class="venue-card reveal rd2" data-num="①">
+      <div class="venue-card__label">Room 1 · Intermission Space</div>
+      <div class="venue-card__name">The Pillar of Present</div>
+      <div class="venue-card__desc">The Orbseer installation: XVISION transparent LED panels shaped as a pillar, backlit with haze and atmospheric projection. Audio-reactive visuals respond live to Elijah Badua's performance. Guests enter between acts. This room is the bridge — the space where Past and Future converge into a single luminous present.</div>
+    </div>
+    <div class="venue-card reveal rd3" data-num="⑤⑥">
+      <div class="venue-card__label">Room 5 or 6 · Rotation Space</div>
+      <div class="venue-card__name">The Haptic Room</div>
+      <div class="venue-card__desc">A cymatic installation combining haptic touch — linens, stone, black sand, and aromatics. Represents the mountain source where VIVĀRA shilajit is found. 2–4 guests rotate through this space per act for a 3–5 minute immersive encounter. Guests may brew their own ceremonial tea here using the ritual of VIVĀRA drops as cymatics appear beneath their hands.</div>
+    </div>
+  </div>
+</section>
+
+<div class="rule"></div>
+
+<!-- ══ CREATIVE TEAM ════════════════════════════ -->
+<section class="section snap" id="team">
+  <div class="section-label reveal">The Artists of the Ceremony</div>
+  <h2 class="section-title reveal rd1">Creative Ensemble</h2>
+
+  <div class="team-grid reveal rd2">
+    <div class="team-member">
+      <div class="team-member__role">Culinary Director · London</div>
+      <div class="team-member__name">Chuck Achike</div>
+      <div class="team-member__archetype">The Culinary Séance</div>
+      <div class="team-member__desc">Nine courses, each synchronized to its element and intention. The blind tasting unfolds as a séance of flavour — five elements made edible. Chuck hosts the narrative journey of craftsmanship, connecting food and gastronomy to ancestral wisdom.</div>
+    </div>
+    <div class="team-member">
+      <div class="team-member__role">Musician · Los Angeles</div>
+      <div class="team-member__name">Elijah Badua</div>
+      <div class="team-member__archetype">The Bridge of Past &amp; Future</div>
+      <div class="team-member__desc">Opens with traditional tambor — grounded, ancestral, elemental. Evolves act by act, introducing synthesizer and live electronics. Plays between every act in Room 1 as his sound drives the Orbseer visuals into life.</div>
+    </div>
+    <div class="team-member">
+      <div class="team-member__role">Digital Artist · Room 1</div>
+      <div class="team-member__name">Orbseer</div>
+      <div class="team-member__archetype">The Pillar of Present</div>
+      <div class="team-member__desc">XVISION transparent LED, atmospheric haze, and backlit projection. Audio-reactive visuals that breathe with Elijah's sound. LED tiles shaped as a pillar — an architecture the guests walk around, not merely observe.</div>
+    </div>
+    <div class="team-member">
+      <div class="team-member__role">Cinematographer · Los Angeles</div>
+      <div class="team-member__name">Adrien Oneiga</div>
+      <div class="team-member__archetype">The Observer</div>
+      <div class="team-member__desc">Red Komodo. Custom Zeiss lenses. Cinema-grade multi-camera capture of the full ceremony. Adrien does not document — he witnesses. Every frame asks: <em>what does nourishment feel like when it becomes sacred?</em></div>
+    </div>
+  </div>
+
+  <div class="note reveal rd3">Speaker hardware to be sourced through XVISION or Funktion One. Funktion One speakers may be provided through Ian (Friend) — TBD. Confirm before production lock.</div>
+</section>
+
+<div class="rule rule--gold"></div>
+
+<!-- ══ CEREMONY INTRO ══════════════════════════ -->
+<section class="section snap" id="ceremony">
+  <div class="section-label reveal">Run of Ceremony · 29 April</div>
+  <h2 class="section-title reveal rd1">The Full Descent</h2>
+  <p class="section-intro reveal rd2">What follows is the living architecture of the evening — subject to iteration as the ceremony breathes. All times are ceremonial anchors, not rigid commands. The experience leads; logistics serve it.</p>
+</section>
+
+<!-- ══ TIMELINE ════════════════════════════════ -->
+<div class="timeline-wrapper snap">
+  <div class="divider">Pre-Departure · Tokyo</div>
+  <div class="timeline">
+
+    <div class="timeline-entry reveal">
+      <div class="timeline-time">1:00 PM</div>
+      <div class="timeline-body">
+        <div class="logistics-entry">
+          <div class="logistics-entry__time">1:00</div>
+          <div class="logistics-entry__title">Production Assembly · Crew Call</div>
+          <div class="logistics-entry__body">All crew, artists, and production team are on-site at KRONOS for final setup. Chuck and kitchen hands begin final prep. Orbseer and Elijah load-in and technical check. Adrien's camera team is rolling B-roll of the empty space — the brutalist void before the table is inhabited.
+            <ul>
+              <li>Room 1 LED rig and haze system operational</li>
+              <li>Pool dining setup confirmed — washi notebooks and pens at each seat</li>
+              <li>Incense altars placed at all four corners of the Pool (four sets, one per act)</li>
+              <li>Haptic Room installation live — sand, stone, linens, aromatics in place</li>
+              <li>Sound system test — Elijah's signal path confirmed</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="timeline-entry reveal">
+      <div class="timeline-time act-marker">1:30 PM</div>
+      <div class="timeline-body">
+        <div class="logistics-entry">
+          <div class="logistics-entry__time">1:30</div>
+          <div class="logistics-entry__title">The Departure · Guests Board</div>
+          <div class="logistics-entry__body">Twenty-one guests board the chartered bus from central Tokyo. The journey to Chiba is the first act of disorientation — the beginning of the sensory transition. Guests are not yet in ceremony, but the ceremony has already begun.
+            <ul>
+              <li>Bus scent: light citrus or hinoki diffusion — subtle transition priming</li>
+              <li>Each guest receives a sealed envelope: a single handwritten line from the VIVĀRA philosophy — their first instruction of the evening. <em>(TBD — to be confirmed by founders)</em></li>
+              <li>Low-volume ambient audio on the bus: Elijah's pre-curated ancestral soundscape <em>(TBD)</em></li>
+              <li>Founders present on bus — casual, no ceremony yet. The descent begins at the venue stairs.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="timeline-entry reveal">
+      <div class="timeline-time act-marker">2:30 PM</div>
+      <div class="timeline-body">
+        <div class="logistics-entry">
+          <div class="logistics-entry__time">2:30</div>
+          <div class="logistics-entry__title">Arrival at KRONOS · The Descent Begins</div>
+          <div class="logistics-entry__body">Guests step off the bus and enter KRONOS through the lower staircase. The physical descent is ceremonially intentional — the guest <em>descends</em> into Act I: Earth. Arriving below grade is the literal enactment of Tsuchi, the first element.
+            <ul>
+              <li>Entry scent: deep earth and oud — grounding, mineral, ancient</li>
+              <li>Sound: a low, steady drone from Elijah's pre-recorded tambor begins at volume — atmospheric but not announced</li>
+              <li>Lighting: minimal. Candlelit and concrete. The brutalist space does the philosophy work before words are spoken.</li>
+              <li>Guests are welcomed and guided directly to the Pool. No social milling — the procession is deliberate.</li>
+              <li>Adrien's team captures the descent staircase from above and below</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="timeline-entry reveal">
+      <div class="timeline-time act-marker">3:00 PM</div>
+      <div class="timeline-body">
+        <div class="logistics-entry">
+          <div class="logistics-entry__time">3:00</div>
+          <div class="logistics-entry__title">Opening Ceremony · Brand Introduction</div>
+          <div class="logistics-entry__body">Guests are seated at the Pool. The washi notebook and pen are on the table before them — no explanation given yet. The founders — Yuto and Austin — offer a brief, grounded introduction: who VIVĀRA is, why this evening exists, and what the product Element 003 — the Aether Drop — represents as a philosophy of living alchemy.
+            <ul>
+              <li>Introduction: ~5–7 minutes. Intimate, not a presentation — a sharing.</li>
+              <li>The three sacred ingredients are named: Shilajit, Tulsi, Saffron</li>
+              <li>Guests are told: there is no menu. Trust will be the first course.</li>
+              <li>Product display: one VIVĀRA bottle placed on the table as an altar object — not for sale, but as a symbol of what they are about to taste</li>
+              <li>Website referenced: VIVARADROPS.COM — visible as a printed element somewhere in the space</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider">Act I · Earth · 土</div>
+
+    <div class="timeline-entry reveal">
+      <div class="timeline-time act-marker">3:10 PM</div>
+      <div class="timeline-body">
+        <div class="act-block" data-act="I">
+          <div class="act-header">
+            <div class="act-kanji">土</div>
+            <div class="act-header-text">
+              <div class="act-number">Act I · Tsuchi</div>
+              <div class="act-title">Earth — The Descent</div>
+            </div>
+            <div class="act-incense"><strong>The Flame · Act I Incense</strong>Vetiver · Myrrh · Black Oud<br/><em>Deep Earth · Root · Foundation</em></div>
+          </div>
+          <blockquote class="act-quote">"You must first touch the ground before you can rise from it."</blockquote>
+          <div class="act-body">
+            <div class="flame-ritual">
+              <div class="flame-ritual-label">Ritual of the Flame · Act I</div>
+              <div class="flame-ritual-body">Four guests are designated The Flame for this act. They rise and move to the four corner altars. Each lights the incense simultaneously — a grounding ignition marking the beginning of Earth. These four carry the ceremony forward on behalf of all twenty-one. A new set of four guests will be chosen as The Flame at each act's opening.</div>
+            </div>
+            <div class="courses" style="margin-top:22px;">
+              <div class="course"><div class="course-num">01</div><div class="course-content"><div class="course-name">Root Protocol <span class="dim" style="font-size:11px;">· Tsuchi no Gi</span></div><div class="course-sub">Obsidian miso broth · Kombu / Shiitake / Barley miso · Shilajit dissolution · 3 saffron threads (floating)</div><div class="course-ritual">◉ Hold the vessel for 30 seconds before drinking. The warmth through the palms is the first information.</div></div></div>
+              <div class="course"><div class="course-num">02</div><div class="course-content"><div class="course-name">Mineral Offering <span class="dim" style="font-size:11px;">· Kobutsu</span></div><div class="course-sub">Fermented burdock root · Black garlic paste (90-day compression) · Celeriac ash · Miso-Shilajit glaze on river stone</div><div class="course-ritual">◉ The guest eats downward through the geological strata — surface to earth.</div></div></div>
+            </div>
+            <div class="directives">
+              <div class="directive"><div class="directive-icon">↳</div><div>As courses 01–02 are set and served, Elijah opens the ceremony with a traditional tambor — 5 to 10 minutes, grounded and ancestral. The room's first vibration. Guests do not applaud; they receive.</div></div>
+              <div class="directive"><div class="directive-icon">↳</div><div>Chuck introduces himself briefly between courses — the philosophy of the elemental kitchen, how Earth translates into matter, texture, mineral flavour.</div></div>
+              <div class="directive"><div class="directive-icon">↳</div><div>After his tambor set, Elijah moves quietly to Room 1 to begin his technical setup for the audiovisual performance.</div></div>
+              <div class="directive"><div class="directive-icon">↳</div><div>Product moment: the founders briefly introduce how Shilajit dissolves into the broth — the product's origin story, the Karakoram Himalayas, the geological patience of the ingredient.</div></div>
+            </div>
+            <div class="intermission">
+              <div class="intermission-label">Intermission I · After Act I</div>
+              <div class="intermission-title">Into the Pillar · Room 1</div>
+              <div class="intermission-body">Guests set down their chopsticks. The washi notebooks are on the table. They are invited — without instruction — to write what they tasted, felt, or remembered during the first act. Thirty to forty seconds of silence and writing.<br/><br/>Guests are then guided as a group to Room 1. Elijah has taken his position. The Orbseer LED pillar breathes in the haze. Elijah begins to play — tambor only, the same ancestral root — as the audio-reactive visuals wake around him. Duration: 7–10 minutes.<br/><br/><span class="tag tag--gold">Haptic Room</span> During this intermission, 2–4 guests are quietly drawn aside by a host to experience the Haptic Room for 3–5 minutes — the cymatic installation, the mountain-source encounter. First rotation.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider">Act II · Water · 水</div>
+
+    <div class="timeline-entry reveal">
+      <div class="timeline-time act-marker">~4:15 PM</div>
+      <div class="timeline-body">
+        <div class="act-block" data-act="II">
+          <div class="act-header">
+            <div class="act-kanji">水</div>
+            <div class="act-header-text"><div class="act-number">Act II · Mizu</div><div class="act-title">Water — Memory</div></div>
+            <div class="act-incense"><strong>The Flame · Act II Incense</strong>Sandalwood · Lotus · Blue Musk<br/><em>Fluid · Ancestral · Oceanic</em></div>
+          </div>
+          <blockquote class="act-quote">"Emotion is not weakness. It is the body's most ancient intelligence."</blockquote>
+          <div class="act-body">
+            <div class="flame-ritual">
+              <div class="flame-ritual-label">Ritual of the Flame · Act II</div>
+              <div class="flame-ritual-body">A new set of four guests become The Flame. The Act I incense is extinguished. Four new hands light the Act II incense at the four corner altars — a new element breathes into the room. The space shifts. The guests who previously held the flame return to their seats carrying the memory of fire.</div>
+            </div>
+            <div class="courses" style="margin-top:22px;">
+              <div class="course"><div class="course-num">03</div><div class="course-content"><div class="course-name">Tide <span class="dim" style="font-size:11px;">· Shio · The Sea</span></div><div class="course-sub">Hokkaido sea urchin · Clarified dashi · Tulsi cold-press oil (hidden beneath the uni) · Preserved lemon drop</div><div class="course-ritual">◉ The bowl is deep — the food cannot be seen until you lean in. You must come toward something to receive it.</div></div></div>
+              <div class="course"><div class="course-num">04</div><div class="course-content"><div class="course-name">Emotion <span class="dim" style="font-size:11px;">· Kanjō · The Weight of Feeling</span></div><div class="course-sub">Persimmon-sake broth · Saffron bloom (full steep, 10 min) · Handmade tofu skin · Gold bowl</div><div class="course-ritual">◉ Each guest speaks one word aloud before eating. The word is the rite. The food is the seal.</div></div></div>
+            </div>
+            <div class="directives">
+              <div class="directive"><div class="directive-icon">↳</div><div>Chuck narrates the Water element — how memory lives in the body, how dashi and sake are themselves forms of liquid memory, how the Hokkaido sea urchin carries the intelligence of cold, deep ocean.</div></div>
+              <div class="directive"><div class="directive-icon">↳</div><div>Course 04: The one-word ritual is facilitated gently by the founders. No pressure — it begins when the first guest chooses to speak. The word may be a feeling, an image, a sensation. It does not need to make sense.</div></div>
+              <div class="directive"><div class="directive-icon">↳</div><div>Product moment: Tulsi is named. Its role as a sacred adaptogen for the mind — breath, clarity, calm — is woven into the description of how the cold-press oil was hidden beneath the tide.</div></div>
+            </div>
+            <div class="intermission">
+              <div class="intermission-label">Intermission II · After Act II</div>
+              <div class="intermission-title">The Synthesizer Awakens · Room 1</div>
+              <div class="intermission-body">Notebooks open. Words are written or drawn. Guests are guided to Room 1.<br/><br/>Elijah now introduces the synthesizer into his set. The ancestral root remains, but the electronic current begins to flow alongside it. The energy builds. The Orbseer visuals become more alive, more responsive — the pillar starts to pulse. Duration: 7–10 minutes.<br/><br/><span class="tag tag--gold">Haptic Room</span> Second rotation of 2–4 guests through the Haptic Room during this intermission. Different guests from Act I rotation.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider">Act III · Breath · 息</div>
+
+    <div class="timeline-entry reveal">
+      <div class="timeline-time act-marker">~5:15 PM</div>
+      <div class="timeline-body">
+        <div class="act-block" data-act="III">
+          <div class="act-header">
+            <div class="act-kanji">息</div>
+            <div class="act-header-text"><div class="act-number">Act III · Iki</div><div class="act-title">Breath — The Pause</div></div>
+            <div class="act-incense"><strong>The Flame · Act III Incense</strong>White Sage · Eucalyptus · Hinoki<br/><em>Clarity · Space · The Breath Between</em></div>
+          </div>
+          <blockquote class="act-quote">"In the space between two breaths — all things become possible."</blockquote>
+          <div class="act-body">
+            <div class="flame-ritual">
+              <div class="flame-ritual-label">Ritual of the Flame · Act III</div>
+              <div class="flame-ritual-body">A third set of four guests become The Flame. The breath-element incense carries the scent of clarity — clean, airy, expansive. As it lights, the guests feel the room open. The exposition is complete. The plot now rises. This is the hinge of the evening.</div>
+            </div>
+            <div class="courses" style="margin-top:22px;">
+              <div class="course"><div class="course-num">05</div><div class="course-content"><div class="course-name">Interval · Ma <span class="dim" style="font-size:11px;">· Negative Space</span></div><div class="course-sub">Yuzu + green shiso sorbet · Tulsi granita crust (frozen, grated at service) · Saffron-thread bubble (tapioca + elderflower)</div><div class="course-ritual">◉ The smell before the taste is the course. One saffron thread — visible, then gone.</div></div></div>
+            </div>
+            <div class="signature-moment" style="margin:22px 0;">
+              <div class="signature-moment-label">Signature Moment · Act III · The Corridor</div>
+              <div class="signature-moment-title">The Drop</div>
+              <div class="signature-moment-body">Warm tulsi water. Palate cleared. Body mid-ceremony. The Drop is the hinge. Delivered in the corridor between acts — not at the table, not announced. It arrives in the space where the evening turns. Between Past, Present, and Becoming. Each guest receives the VIVĀRA Aether Drop dissolved in warm water as they pass through.</div>
+            </div>
+            <div class="directives">
+              <div class="directive"><div class="directive-icon">↳</div><div>Chuck speaks to the Ayurvedic blend — what it takes to source shilajit at altitude, the rarity and richness of the ingredient, how the blend was formulated. This is the product's deepest story moment of the evening.</div></div>
+              <div class="directive"><div class="directive-icon">↳</div><div>Act III marks the shift from exposition to rising action — in cinematic terms, the inciting incident deepens. Energy in the room begins to lift. Guests are laughing, sharing, leaning in. The ceremony is now fully alive.</div></div>
+              <div class="directive"><div class="directive-icon">↳</div><div>The Ma sorbet is a breath-course — lighter, spacious, chromatic. It clears the body for what is to come in Act IV.</div></div>
+            </div>
+            <div class="intermission">
+              <div class="intermission-label">Intermission III · After Act III</div>
+              <div class="intermission-title">The Corridor · Room 1 Continues</div>
+              <div class="intermission-body">Guests write in their washi notebooks — the energy is building. People are sharing reflections, memories surface, new friendships form. The evening has the quality of a sustained qi gong practice — a flow state of the senses.<br/><br/>Guests move to Room 1. Elijah's set continues to evolve. The synthesizer now leads alongside the tambor. Orbseer's visuals respond to the growing electronic current — the pillar breathes faster, more complex.<br/><br/><span class="tag tag--gold">Haptic Room</span> Third rotation. The remaining guests who have not yet experienced the Haptic Room are prioritised in this act. All guests should have passed through by Act IV.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider">Act IV · Fire · 火</div>
+
+    <div class="timeline-entry reveal">
+      <div class="timeline-time act-marker">~6:15 PM</div>
+      <div class="timeline-body">
+        <div class="act-block" data-act="IV">
+          <div class="act-header">
+            <div class="act-kanji">火</div>
+            <div class="act-header-text"><div class="act-number">Act IV · Hi</div><div class="act-title">Fire — Transformation</div></div>
+            <div class="act-incense"><strong>The Flame · Act IV Incense</strong>Dragon's Blood · Amber · Frankincense<br/><em>Heat · Transformation · Combustion</em></div>
+          </div>
+          <blockquote class="act-quote">"To be changed, something must be willing to burn."</blockquote>
+          <div class="act-body">
+            <div class="flame-ritual">
+              <div class="flame-ritual-label">Ritual of the Flame · Act IV</div>
+              <div class="flame-ritual-body">The fourth and final set of four guests become The Flame. Dragon's Blood, Amber, Frankincense — the heaviest, most transformative incense of the ceremony. As it lights, the room shifts into a new gravity. The main course is arriving. Something is about to burn. The guests who light the flame do so knowing they are initiating the ceremony's most potent act.</div>
+            </div>
+            <div class="courses" style="margin-top:22px;">
+              <div class="course"><div class="course-num">06</div><div class="course-content"><div class="course-name">The Offering <span class="dim" style="font-size:11px;">· Kenjō · A5 Wagyu</span></div><div class="course-sub">A5 Wagyu (dry-aged 45 days) · Shilajit bone marrow lacquer · Black garlic · Aged soy reduction</div><div class="course-ritual">◉ "What are you ready for?" — asked before each piece is cooked. The guest answers before receiving.</div></div></div>
+              <div class="course"><div class="course-num">07</div><div class="course-content"><div class="course-name">Ash &amp; Ember <span class="dim" style="font-size:11px;">· Zanbi · What Remains</span></div><div class="course-sub">Charred root vegetables (burdock / turnip / sweet potato) · Saffron miso glaze (pre-char) · Binchotan smoke finish</div><div class="course-ritual">◉ The tableside char is aromatherapy. Guests smell saffron-smoke before tasting. The scent is the first flavour.</div></div></div>
+            </div>
+            <div class="directives">
+              <div class="directive"><div class="directive-icon">↳</div><div>Chuck performs the binchotan char tableside — a theatrical, kinaesthetic moment. The scent of saffron-smoke carries through the room. Adrien captures close.</div></div>
+              <div class="directive"><div class="directive-icon">↳</div><div>Chuck's kitchen hand or assistant prepares staging in the pool during all intermissions — this act demands the most plating precision. Confirm kitchen adjacency and binchotan smoke ventilation with venue before production lock.</div></div>
+              <div class="directive"><div class="directive-icon">↳</div><div>Product moment: the Shilajit bone marrow lacquer is the most visceral expression of the ingredient in the entire menu — it is not hidden, it is the centrepiece. The founders narrate this briefly.</div></div>
+            </div>
+            <div class="intermission">
+              <div class="intermission-label">Intermission IV · After Act IV</div>
+              <div class="intermission-title">The Finale of Fire · Room 1 Climax</div>
+              <div class="intermission-body">Notebooks open. The pages are filling with stories — memories, reflections, names, words that have no translation. New friends. Old energy becoming new.<br/><br/>Guests move to Room 1 for the final and most energetically charged performance of the Elijah × Orbseer set. Fire drives the music and the visuals. The synthesizer is fully alive. The LED pillar responds in real time — pulsing, fracturing, expanding. This is the visual-sonic peak of the evening. Duration: 10–12 minutes.<br/><br/><span class="tag tag--gold">Haptic Room</span> Final Haptic Room rotation if any guests have not yet attended. This round may also invite repeat visitors for a final immersive encounter before the closing act.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider">Act V · Ether · 空</div>
+
+    <div class="timeline-entry reveal">
+      <div class="timeline-time act-marker">~7:30 PM</div>
+      <div class="timeline-body">
+        <div class="act-block" data-act="V">
+          <div class="act-header">
+            <div class="act-kanji">空</div>
+            <div class="act-header-text"><div class="act-number">Act V · Sora</div><div class="act-title">Ether — The Communion</div></div>
+            <div class="act-incense"><strong>Final Offering · Closing Scent</strong>Jasmine · Neroli · Ceremonial Palo Santo<br/><em>Ascension · Unity · Completion</em></div>
+          </div>
+          <blockquote class="act-quote">"You came as individuals. You leave as something larger."</blockquote>
+          <div class="act-body">
+            <p style="font-family:'EB Garamond',serif;font-size:clamp(14px,2.3vw,16px);color:var(--muted);margin-bottom:18px;line-height:1.75;">Before the final courses are served, the ceremony pauses. Guests are invited to share — briefly, without ceremony or obligation — one reflection from the evening. A word. A memory. An image. Chuck, Yuto, and Austin open the sharing by going first. This is not a toast. It is a transmission.</p>
+            <div class="courses" style="margin-top:22px;">
+              <div class="course"><div class="course-num">08</div><div class="course-content"><div class="course-name">Ancestor's Sweet <span class="dim" style="font-size:11px;">· Senzo · What We Carry</span></div><div class="course-sub">Date + black sesame paste + Shilajit dissolution · Matcha kuzu kiri (transparent, trembling) · Saffron-tempered cipher chocolate (gold flecks)</div><div class="course-ritual">◉ The cipher chocolate is held on the tongue. Let it dissolve without chewing. Receive it.</div></div></div>
+              <div class="course"><div class="course-num">09</div><div class="course-content"><div class="course-name">Ceremonial Cacao <span class="dim" style="font-size:11px;">· Gishiki no Kakao · Full Integration</span></div><div class="course-sub">Ceremonial cacao base · Forest honey · Tulsi tincture finish · Saffron steep · Shilajit dissolution (100mg)</div><div class="course-ritual">◉ Three swallows. This is not a drink. It is the closing rite. Past → Present → Becoming.</div></div></div>
+            </div>
+            <div class="directives" style="margin-top:18px;">
+              <div class="directive"><div class="directive-icon">↳</div><div>As the final courses are being received, Elijah returns to the Pool room. He performs a final one to two songs — closing the sonic arc of the evening with intention. The energy moves inward, slower, deeper. The room hears itself breathing.</div></div>
+              <div class="directive"><div class="directive-icon">↳</div><div>At Act V, the full menu is revealed. Each guest compares their washi notebook record against the reality of what was served. The card they keep is their personal menu — a relic of the ceremony.</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider">Closing Ceremony · ~8:30 PM</div>
+
+    <div class="timeline-entry reveal">
+      <div class="timeline-time act-marker">8:30 PM</div>
+      <div class="timeline-body">
+        <div class="logistics-entry">
+          <div class="logistics-entry__time">8:30</div>
+          <div class="logistics-entry__title">Final Procession · Gratitude &amp; Closing Meditation</div>
+          <div class="logistics-entry__body">Chuck, Yuto, and Austin come together before the guests for the final procession. They share what they witnessed — what the evening revealed to them as it unfolded. They thank the artists, collaborators, and partners of the ceremony by name.<br/><br/>Following the thanks, a closing meditation or grounded practice is offered — connected directly to VIVĀRA's philosophy of ancestral futurism. A suggested form:
+            <ul>
+              <li><em>The Three-Breath Rite:</em> Guided by a single voice (founder or Elijah), guests close their eyes. Three deep, conscious breaths — one for Past, one for Present, one for Becoming. Each breath accompanied by a low sustained tone from Elijah's instrument. On the third breath, silence. A held moment. The ceremony completes itself.</li>
+              <li>The washi notebooks are closed — they leave with the guests as the personal record of the evening.</li>
+              <li>Each guest receives a small VIVĀRA takeaway: a sealed vial of the Aether Drop Element 003 — the ceremony to carry home. <em>(To be confirmed)</em></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider">After the Ceremony · ~9:00 PM</div>
+
+    <div class="timeline-entry reveal">
+      <div class="timeline-time">9:00 PM</div>
+      <div class="timeline-body">
+        <div class="logistics-entry">
+          <div class="logistics-entry__time">9:00</div>
+          <div class="logistics-entry__title">Communion · Sound, Movement &amp; Digestion</div>
+          <div class="logistics-entry__body">Elijah connects his USB to the mixer. The ceremony opens into a free, grounded communion. Audio-reactive visuals in Room 1 remain live. Guests move between the Pool and Room 1 — dancing, talking, digesting in grounded unison. This is not a party. It is a decompression of what the body has received — movement as integration, sound as medicine.
+            <ul>
+              <li>Elijah's post-ceremony set: electronic, hypnotic, rooted. The ancestral thread remains in the music even as the energy opens.</li>
+              <li>Room 1 visuals continue to pulse with Elijah's sound — the Orbseer installation at its most liberated.</li>
+              <li>Light drinks offered — light wine, ceremonial tea, or sparkling water with tulsi. Nothing heavy. The evening closes as lightly as it must.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider">Departure · ~10:00–11:00 PM</div>
+
+    <div class="timeline-entry reveal">
+      <div class="timeline-time act-marker">10:00 PM</div>
+      <div class="timeline-body">
+        <div class="logistics-entry">
+          <div class="logistics-entry__time">10:00</div>
+          <div class="logistics-entry__title">The Return · Bus to Tokyo</div>
+          <div class="logistics-entry__body">Guests board the chartered bus for the return journey to Tokyo. The descent into ceremony is complete; the ascent back into the world begins. The bus is the threshold between what was and what now is.
+            <ul>
+              <li>Light drinks provided on the bus: sparkling water, sake, or a light ceremonial beverage for the journey home</li>
+              <li>Low-volume ambient audio — a closing playlist curated by Elijah, or soft silence by choice</li>
+              <li>Guests carry their washi notebooks, the full menu card (revealed at Act V), and the VIVĀRA product takeaway</li>
+              <li>Founders available for conversation — the evening continues in reflection as the city returns into view</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- .timeline -->
+</div><!-- .timeline-wrapper -->
+
+<div class="rule rule--gold"></div>
+
+<!-- ══ CLOSING NOTES ════════════════════════════ -->
+<section class="section snap" id="closing">
+  <div class="section-label reveal">Production Notes · Open Items</div>
+  <h2 class="section-title reveal rd1">Flags &amp; Confirmations</h2>
+
+  <div class="closing-grid reveal rd2">
+    <div class="closing-cell">
+      <div class="closing-cell-label">Logistics · To Confirm</div>
+      <div class="closing-cell-title">Open Items</div>
+      <div class="closing-cell-body">
+        <ul style="list-style:none;font-size:13px;line-height:2.1;">
+          <li style="padding-left:18px;position:relative;"><span style="position:absolute;left:0;color:var(--gold);">○</span>Bus: charter confirmed, capacity, departure point, return time</li>
+          <li style="padding-left:18px;position:relative;"><span style="position:absolute;left:0;color:var(--gold);">○</span>Room 5 vs Room 6: Haptic installation space finalised with venue</li>
+          <li style="padding-left:18px;position:relative;"><span style="position:absolute;left:0;color:var(--gold);">○</span>Funktion One / XVISION speakers: Ian (Friend) — TBD</li>
+          <li style="padding-left:18px;position:relative;"><span style="position:absolute;left:0;color:var(--gold);">○</span>Cymatic installation: TBD — Haptic Room (with or without vibration element)</li>
+          <li style="padding-left:18px;position:relative;"><span style="position:absolute;left:0;color:var(--gold);">○</span>Open flame policy: confirm with KRONOS — incense + paper burning required</li>
+          <li style="padding-left:18px;position:relative;"><span style="position:absolute;left:0;color:var(--gold);">○</span>Binchotan smoke ventilation: confirm kitchen adjacency and extraction</li>
+          <li style="padding-left:18px;position:relative;"><span style="position:absolute;left:0;color:var(--gold);">○</span>Guest takeaway: VIVĀRA vial of Element 003 — source and quantity</li>
+          <li style="padding-left:18px;position:relative;"><span style="position:absolute;left:0;color:var(--gold);">○</span>Bus experience: sensory element TBD — sealed envelope / curated audio</li>
+          <li style="padding-left:18px;position:relative;"><span style="position:absolute;left:0;color:var(--gold);">○</span>Chuck's kitchen hands: confirm number and roles for service</li>
+          <li style="padding-left:18px;position:relative;"><span style="position:absolute;left:0;color:var(--gold);">○</span>Closing meditation facilitator: founders / Elijah — to be decided</li>
+        </ul>
+      </div>
+    </div>
+    <div class="closing-cell">
+      <div class="closing-cell-label">Post-Production · Content</div>
+      <div class="closing-cell-title">The Archive</div>
+      <div class="closing-cell-body">Adrien Oneiga captures the full ceremony on Red Komodo with custom Zeiss lenses. The editorial direction: <em>do not shoot content — capture states of being.</em> Every frame answers: what does nourishment feel like when it becomes sacred?<br/><br/>Key capture moments: the staircase descent · the empty brutalist space before guests arrive · the washi notebooks filling · the tambor opening · the LED pillar in full bloom · the binchotan smoke · the three-breath closing rite · the bus windows on the return to Tokyo.<br/><br/>The footage becomes the first VIVĀRA brand film — not a promotional asset, but a living document of a ceremony. Distributed first to the 21 guests. Then to the world.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ════════════════════════════════════ -->
+<footer class="footer snap">
+  <div>
+    <div class="footer__brand-name">VIVĀRA</div>
+    <div class="footer__brand-sub">Living Alchemy in Ancestral Futurism</div>
+  </div>
+  <div class="footer__meta">
+    <div>VIVARADROPS.COM</div>
+    <div>KRONOS · CHIBA · JAPAN</div>
+    <div>29 APRIL · NINE COURSES · FIVE ACTS · TWENTY-ONE GUESTS</div>
+    <div class="footer__conf">Confidential Working Document · Subject to Revision</div>
+  </div>
+</footer>
+
+<!-- ══ INTERSECTION OBSERVER ══════════════════ -->
+<script>
+(function(){
+  // Fade-in on scroll
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){ e.target.classList.add('visible'); io.unobserve(e.target); }
+    });
+  },{threshold:.1,rootMargin:'0px 0px -36px 0px'});
+  document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+
+  // Nav active-link highlight
+  var sections = document.querySelectorAll('section[id]');
+  var links    = document.querySelectorAll('.nav__links a');
+  var so = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting && e.intersectionRatio>=.25){
+        var id = e.target.id;
+        links.forEach(function(l){
+          l.classList.toggle('active', l.getAttribute('href')==='#'+id);
+        });
+      }
+    });
+  },{threshold:.25});
+  sections.forEach(function(s){ so.observe(s); });
+})();
+</script>
+</body>
+</html>
