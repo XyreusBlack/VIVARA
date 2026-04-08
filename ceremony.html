@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+<title>VIVĀRA · The Ceremony</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Tenor+Sans&family=EB+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet"/>
+<style>
+/* ═══ TOKENS ═══════════════════════════════════ */
+:root{
+  --void:#030303;
+  --surface:#0c0c0c;
+  --surface2:#111;
+  --border:rgba(255,255,255,.06);
+  --border-md:rgba(255,255,255,.11);
+  --white:#ede7df;
+  --muted:rgba(237,231,223,.42);
+  --dim:rgba(237,231,223,.2);
+  --gold:#c4963d;
+  --gold-d:rgba(196,150,61,.22);
+  --gold-g:rgba(196,150,61,.07);
+  --gold-bright:#e8b96a;
+  --px:clamp(20px,5vw,52px);
+  --max:1080px;
+  /* act colours */
+  --c1:#7a5828; --c2:#1d4e6e; --c3:#3d7050; --c4:#8a2c10; --c5:#4a3080;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--void);color:var(--white);
+  font-family:'Tenor Sans',sans-serif;
+  font-size:clamp(12.5px,1.6vw,14px);
+  line-height:1.7;letter-spacing:.022em;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+
+/* ── grain overlay ── */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:9000;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.88' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
+  animation:grain 12s ease-in-out infinite;
+}
+@keyframes grain{0%,100%{opacity:.4}50%{opacity:.68}}
+
+em{font-family:'EB Garamond',serif;font-style:italic;color:var(--gold);}
+
+/* ═══ SCROLL REVEAL ═════════════════════════════ */
+.reveal{
+  opacity:0;transform:translateY(20px);
+  transition:opacity .85s cubic-bezier(.16,1,.3,1),transform .85s cubic-bezier(.16,1,.3,1);
+}
+.reveal.on{opacity:1;transform:none;}
+.rd1{transition-delay:.1s}.rd2{transition-delay:.2s}.rd3{transition-delay:.3s}
+.rd4{transition-delay:.4s}.rd5{transition-delay:.5s}.rd6{transition-delay:.6s}
+
+/* ═══ KEYFRAMES ═════════════════════════════════ */
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+@keyframes pulse{0%,100%{opacity:.25}50%{opacity:1}}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.008)}}
+@keyframes glow{0%,100%{opacity:.3}50%{opacity:1}}
+@keyframes rotate{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes ripple{
+  0%{transform:scale(.4);opacity:.7;stroke-width:1.5}
+  100%{transform:scale(2.2);opacity:0;stroke-width:.3}
+}
+@keyframes dash{to{stroke-dashoffset:-28}}
+@keyframes scanline{0%{top:-15%}100%{top:110%}}
+@keyframes ledFlicker{
+  0%,96%{opacity:1}97%{opacity:.6}98%{opacity:1}99%{opacity:.4}100%{opacity:1}
+}
+@keyframes wavePulse{
+  0%{d:path("M0,12 C20,8 40,16 60,12 C80,8 100,16 120,12");stroke-width:1}
+  50%{d:path("M0,12 C20,16 40,8 60,12 C80,16 100,8 120,12");stroke-width:1.4}
+  100%{d:path("M0,12 C20,8 40,16 60,12 C80,8 100,16 120,12");stroke-width:1}
+}
+
+/* ═══ NAV ═══════════════════════════════════════ */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  height:50px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 var(--px);
+  background:rgba(3,3,3,.88);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--border);
+}
+.nav__brand{
+  font-family:'Cormorant Garamond',serif;font-weight:300;
+  font-size:clamp(13px,2.2vw,16px);letter-spacing:.28em;text-transform:uppercase;
+}
+.nav__links{
+  display:flex;gap:clamp(14px,3vw,28px);list-style:none;
+}
+.nav__links a{
+  font-size:8px;letter-spacing:.28em;text-transform:uppercase;
+  color:var(--muted);text-decoration:none;transition:color .2s;
+}
+.nav__links a:hover{color:var(--gold);}
+.nav__right{font-size:8px;letter-spacing:.22em;text-transform:uppercase;color:var(--dim);}
+
+/* ═══ SECTIONS / LAYOUT ═════════════════════════ */
+section{padding:clamp(64px,10vw,120px) var(--px);}
+.inner{max-width:var(--max);margin:0 auto;}
+
+.sec-label{
+  font-size:8px;letter-spacing:.42em;text-transform:uppercase;color:var(--gold);
+  margin-bottom:16px;display:flex;align-items:center;gap:14px;
+}
+.sec-label::before{content:'';width:24px;height:1px;background:var(--gold);animation:pulse 5s ease-in-out infinite;}
+.sec-title{
+  font-family:'Cormorant Garamond',serif;font-weight:300;
+  font-size:clamp(32px,5vw,56px);letter-spacing:.08em;text-transform:uppercase;
+  line-height:1;margin-bottom:20px;
+}
+.sec-sub{
+  font-family:'EB Garamond',serif;font-style:italic;
+  font-size:clamp(15px,2.2vw,19px);color:var(--muted);
+  max-width:580px;line-height:1.72;margin-bottom:44px;
+}
+
+.rule{height:1px;background:linear-gradient(90deg,transparent,var(--gold-d),transparent);}
+
+/* ═══ HERO ═══════════════════════════════════════ */
+.hero{
+  padding-top:clamp(110px,18vh,160px);
+  padding-bottom:clamp(64px,10vw,100px);
+  position:relative;overflow:hidden;
+}
+/* ambient radial */
+.hero::before{
+  content:'';position:absolute;
+  top:40%;left:50%;transform:translate(-50%,-50%);
+  width:min(700px,140vw);height:min(700px,140vw);
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(196,150,61,.055) 0%,transparent 68%);
+  pointer-events:none;animation:breathe 10s ease-in-out infinite;
+}
+/* scanline */
+.hero::after{
+  content:'';position:absolute;
+  left:0;right:0;height:12%;
+  background:linear-gradient(to bottom,transparent,rgba(196,150,61,.016),transparent);
+  animation:scanline 20s linear infinite;pointer-events:none;
+}
+.hero__inner{
+  max-width:var(--max);margin:0 auto;
+  display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;
+}
+.hero__left{}
+.hero__eyebrow{
+  font-size:8px;letter-spacing:.44em;text-transform:uppercase;color:var(--gold);
+  margin-bottom:clamp(18px,3vw,28px);
+  display:flex;align-items:center;gap:14px;
+  animation:fadeUp .9s ease both .2s;
+}
+.hero__eyebrow::before{content:'';width:28px;height:1px;background:var(--gold);animation:pulse 5s ease-in-out infinite;}
+.hero__title{
+  font-family:'Cormorant Garamond',serif;font-weight:300;
+  font-size:clamp(64px,12vw,130px);letter-spacing:.08em;text-transform:uppercase;
+  line-height:.88;margin-bottom:clamp(16px,3vw,24px);
+  animation:fadeUp .9s ease both .35s;
+}
+.hero__desc{
+  font-family:'EB Garamond',serif;font-style:italic;
+  font-size:clamp(15px,2.2vw,20px);color:var(--muted);
+  line-height:1.7;max-width:480px;margin-bottom:clamp(28px,4vw,40px);
+  animation:fadeUp .9s ease both .5s;
+  border-left:1px solid var(--gold-d);padding-left:18px;
+}
+.hero__meta{
+  display:flex;flex-wrap:wrap;gap:0;
+  border:1px solid var(--border-md);
+  animation:fadeUp .9s ease both .65s;
+}
+.hero__meta-item{
+  padding:10px 18px;border-right:1px solid var(--border-md);
+  font-size:8px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);
+}
+.hero__meta-item:last-child{border-right:none;}
+.hero__meta-item strong{
+  display:block;font-family:'Cormorant Garamond',serif;
+  font-size:clamp(13px,2vw,15px);letter-spacing:.08em;font-weight:400;
+  color:var(--white);margin-bottom:2px;
+}
+
+/* Hero right: ceremony visualisation */
+.hero__right{
+  display:flex;align-items:center;justify-content:center;
+  animation:fadeUp .9s ease both .5s;
+}
+.hero-vis{
+  width:100%;max-width:340px;
+  aspect-ratio:1;position:relative;
+}
+.hero-vis__svg{width:100%;height:100%;overflow:visible;}
+
+/* ═══ ACTS SECTION ═══════════════════════════════ */
+.acts{background:var(--surface);}
+.acts-arc{
+  position:relative;width:100%;
+  margin-bottom:clamp(32px,5vw,52px);
+}
+.acts-arc__svg{width:100%;overflow:visible;display:block;}
+
+/* Act cards — horizontal scroll on all sizes */
+.acts-scroll{
+  overflow-x:auto;-webkit-overflow-scrolling:touch;
+  scrollbar-width:none;margin:0 calc(-1*var(--px));
+  padding:0 var(--px);cursor:grab;
+}
+.acts-scroll::-webkit-scrollbar{display:none;}
+.acts-scroll:active{cursor:grabbing;}
+.acts-track{
+  display:flex;gap:12px;
+  padding-bottom:4px;
+  min-width:max-content;
+}
+
+.act-card{
+  width:clamp(200px,28vw,260px);
+  background:var(--void);
+  border:1px solid var(--border);
+  padding:clamp(20px,3vw,28px) clamp(16px,2.5vw,22px);
+  position:relative;overflow:hidden;
+  cursor:pointer;
+  transition:border-color .4s,background .4s;
+  flex-shrink:0;
+  user-select:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation;
+}
+.act-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:var(--act-col,var(--gold));
+  opacity:.7;transition:opacity .4s;
+}
+.act-card.active,
+.act-card:hover{
+  border-color:var(--act-col,var(--gold));
+  background:var(--gold-g);
+}
+.act-card.active::before,
+.act-card:hover::before{opacity:1;}
+
+.act-card__kanji{
+  font-family:'EB Garamond',serif;
+  font-size:clamp(44px,7vw,58px);
+  color:var(--act-col,var(--gold-d));
+  opacity:.35;line-height:1;margin-bottom:8px;display:block;
+  transition:opacity .4s;
+  animation:breathe 9s ease-in-out infinite;
+}
+.act-card.active .act-card__kanji,
+.act-card:hover .act-card__kanji{opacity:.8;}
+.act-card__num{
+  font-size:7px;letter-spacing:.35em;text-transform:uppercase;
+  color:var(--act-col,var(--gold));margin-bottom:4px;opacity:.8;
+}
+.act-card__name{
+  font-family:'Cormorant Garamond',serif;font-weight:300;
+  font-size:clamp(18px,2.5vw,22px);letter-spacing:.12em;text-transform:uppercase;
+  margin-bottom:4px;
+}
+.act-card__jp{
+  font-family:'EB Garamond',serif;font-style:italic;
+  font-size:11px;color:var(--muted);margin-bottom:12px;
+}
+.act-card__time{
+  font-size:8px;letter-spacing:.18em;color:var(--dim);margin-bottom:12px;text-transform:uppercase;
+}
+.act-card__quote{
+  font-family:'EB Garamond',serif;font-style:italic;
+  font-size:11px;color:var(--dim);line-height:1.6;
+  border-top:1px solid var(--border);padding-top:10px;margin-top:auto;
+}
+.act-card.active .act-card__quote,
+.act-card:hover .act-card__quote{color:var(--muted);}
+.act-card__incense{
+  margin-top:10px;font-size:8.5px;color:var(--dim);
+  display:flex;align-items:center;gap:6px;
+}
+.act-card__incense::before{content:'◈';color:var(--gold);font-size:8px;opacity:.6;}
+
+/* Act detail panel */
+.act-detail{
+  background:var(--surface2);border:1px solid var(--border);
+  padding:clamp(20px,3vw,32px) clamp(18px,3vw,28px);
+  min-height:140px;transition:border-color .4s;
+  margin-top:12px;
+}
+.act-detail__inner{
+  display:grid;grid-template-columns:1fr 1fr;gap:24px;
+  animation:fadeUp .4s ease both;
+}
+.act-detail__label{
+  font-size:7px;letter-spacing:.35em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:8px;
+  display:flex;align-items:center;gap:10px;
+}
+.act-detail__label::after{content:'';flex:1;height:1px;background:var(--border);}
+.act-detail__courses{display:flex;flex-direction:column;gap:6px;}
+.act-detail__course{
+  display:grid;grid-template-columns:16px 1fr;gap:8px;align-items:baseline;
+}
+.act-detail__cn{font-family:'Cormorant Garamond',serif;font-size:11px;color:var(--gold);opacity:.7;}
+.act-detail__cname{font-family:'Cormorant Garamond',serif;font-size:12px;letter-spacing:.06em;text-transform:uppercase;}
+.act-detail__csub{
+  grid-column:2;font-size:9px;color:var(--dim);
+  font-family:'EB Garamond',serif;font-style:italic;margin-top:-1px;
+}
+.act-detail__notes{display:flex;flex-direction:column;gap:6px;}
+.act-detail__note{
+  font-size:10.5px;color:var(--muted);line-height:1.55;
+  display:flex;gap:8px;align-items:flex-start;
+}
+.act-detail__note::before{
+  content:'↳';color:var(--gold);font-size:9px;
+  flex-shrink:0;margin-top:1px;opacity:.7;
+}
+
+/* Arc progress dots */
+.arc-node{
+  fill:var(--void);stroke:rgba(255,255,255,.12);stroke-width:1;
+  cursor:pointer;transition:all .4s;
+}
+.arc-node.lit{
+  fill:var(--node-col,var(--gold));
+  stroke:var(--node-col,var(--gold));
+  filter:drop-shadow(0 0 6px var(--node-col,rgba(196,150,61,.5)));
+}
+.arc-path{
+  fill:none;stroke:rgba(255,255,255,.06);stroke-width:1;
+}
+.arc-path-lit{
+  fill:none;stroke:var(--gold-d);stroke-width:1;
+  stroke-dasharray:1200;stroke-dashoffset:1200;
+  transition:stroke-dashoffset 2s cubic-bezier(.4,0,.2,1);
+}
+.arc-path-lit.drawn{stroke-dashoffset:0;}
+
+.arc-label-en{
+  font-family:'Cormorant Garamond',serif;font-weight:300;
+  font-size:11px;fill:rgba(237,231,223,.55);letter-spacing:.1em;text-transform:uppercase;
+}
+.arc-label-k{
+  font-family:'EB Garamond',serif;font-size:18px;
+  fill:rgba(196,150,61,.25);transition:fill .4s;
+}
+.arc-label-k.lit{fill:var(--node-col,rgba(196,150,61,.8));}
+
+/* ═══ THREE EXPERIENCES ═══════════════════════════ */
+.experiences{position:relative;}
+.exp-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
+  background:var(--border);border:1px solid var(--border);
+}
+.exp{
+  background:var(--void);padding:clamp(28px,4vw,44px) clamp(20px,3vw,32px);
+  position:relative;overflow:hidden;
+  cursor:default;transition:background .4s;
+}
+.exp:hover{background:rgba(196,150,61,.03);}
+
+/* top colour accent */
+.exp::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:var(--exp-col,var(--gold));opacity:.6;
+  transition:opacity .4s;
+}
+.exp:hover::before{opacity:1;}
+
+.exp__icon{
+  margin-bottom:20px;
+  width:52px;height:52px;flex-shrink:0;
+}
+.exp__icon svg{width:100%;height:100%;overflow:visible;}
+
+.exp__num{
+  font-size:7px;letter-spacing:.38em;text-transform:uppercase;
+  color:var(--exp-col,var(--gold));margin-bottom:10px;opacity:.8;
+}
+.exp__title{
+  font-family:'Cormorant Garamond',serif;font-weight:300;
+  font-size:clamp(20px,2.8vw,28px);letter-spacing:.1em;text-transform:uppercase;
+  line-height:1.05;margin-bottom:10px;
+}
+.exp__sub{
+  font-family:'EB Garamond',serif;font-style:italic;
+  font-size:11px;color:var(--gold);margin-bottom:14px;
+}
+.exp__body{
+  font-family:'EB Garamond',serif;
+  font-size:clamp(13px,1.8vw,15px);color:var(--muted);
+  line-height:1.72;
+}
+.exp__tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:16px;}
+.exp__tag{
+  font-size:8px;letter-spacing:.18em;text-transform:uppercase;
+  padding:3px 9px;border:1px solid var(--border-md);color:var(--dim);
+}
+
+/* ═══ FLOW DIAGRAM ════════════════════════════════ */
+.flow-section{background:var(--surface);}
+.flow-diagram{
+  display:flex;flex-direction:column;gap:0;
+  border:1px solid var(--border);
+}
+.flow-row{
+  display:grid;grid-template-columns:90px 40px 1fr;
+  border-bottom:1px solid var(--border);
+  align-items:stretch;
+}
+.flow-row:last-child{border-bottom:none;}
+.flow-row.inter{opacity:.7;}
+.flow-time{
+  padding:14px 12px;
+  font-family:'Cormorant Garamond',serif;font-size:13px;
+  letter-spacing:.05em;color:var(--muted);text-align:right;
+  display:flex;align-items:center;justify-content:flex-end;
+  border-right:1px solid var(--border);
+  font-variant-numeric:tabular-nums;
+}
+.flow-time.act-t{color:var(--row-col,var(--gold));}
+.flow-spine{
+  display:flex;flex-direction:column;align-items:center;
+  padding:0;
+  border-right:1px solid var(--border);
+  position:relative;
+}
+.flow-line{flex:1;width:1px;background:var(--border-md);}
+.flow-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--border-md);border:1px solid var(--border-md);
+  flex-shrink:0;margin:4px 0;z-index:1;
+}
+.flow-row:not(.inter) .flow-dot{
+  background:var(--row-col,var(--gold-d));
+  border-color:var(--row-col,var(--gold-d));
+  box-shadow:0 0 6px var(--row-col,rgba(196,150,61,.2));
+}
+.flow-body{
+  padding:12px 0 12px clamp(14px,2.5vw,20px);
+  display:flex;flex-direction:column;justify-content:center;gap:3px;
+}
+.flow-tag{
+  font-size:7px;letter-spacing:.28em;text-transform:uppercase;
+  border:1px solid var(--border);color:var(--dim);
+  padding:1px 8px;display:inline-block;margin-bottom:3px;
+  align-self:flex-start;
+}
+.flow-tag.act-tag{border-color:var(--row-col,var(--gold-d));color:var(--row-col,var(--gold));}
+.flow-title{
+  font-family:'Cormorant Garamond',serif;font-weight:300;
+  font-size:clamp(13px,2vw,15px);letter-spacing:.08em;text-transform:uppercase;
+}
+.flow-desc{font-size:10.5px;color:var(--muted);line-height:1.5;}
+.flow-pills{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;}
+.flow-pill{
+  font-size:7.5px;letter-spacing:.14em;text-transform:uppercase;
+  padding:2px 7px;border:1px solid var(--border);color:var(--dim);
+}
+.flow-pill.gold{border-color:var(--gold-d);color:var(--gold);}
+
+/* ═══ INGREDIENTS ════════════════════════════════ */
+.ingredients-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
+  background:var(--border);border:1px solid var(--border);
+  margin-top:clamp(28px,4vw,44px);
+}
+.ingredient{
+  background:var(--surface);
+  padding:clamp(22px,3.5vw,36px) clamp(16px,2.5vw,24px);
+}
+.ingredient__n{
+  font-family:'EB Garamond',serif;
+  font-size:clamp(36px,5vw,50px);color:var(--gold-d);
+  line-height:1;margin-bottom:8px;display:block;
+  animation:breathe 9s ease-in-out infinite;
+}
+.ingredient__name{
+  font-family:'Cormorant Garamond',serif;font-weight:300;
+  font-size:clamp(16px,2.2vw,20px);letter-spacing:.15em;text-transform:uppercase;margin-bottom:4px;
+}
+.ingredient__axis{
+  font-size:8px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:10px;
+}
+.ingredient__body{font-size:11.5px;color:var(--dim);line-height:1.65;}
+
+/* ═══ ARTISTS ════════════════════════════════════ */
+.artists-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
+  background:var(--border);border:1px solid var(--border);
+  margin-top:clamp(28px,4vw,44px);
+}
+.artist{
+  background:var(--void);
+  padding:clamp(18px,2.5vw,26px) clamp(14px,2vw,20px);
+}
+.artist__role{font-size:7px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:7px;}
+.artist__name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(15px,2vw,18px);letter-spacing:.08em;margin-bottom:4px;
+}
+.artist__arch{
+  font-family:'EB Garamond',serif;font-style:italic;
+  font-size:11px;color:var(--gold);margin-bottom:8px;
+}
+.artist__body{font-size:11px;color:var(--dim);line-height:1.6;}
+
+/* ═══ FOOTER ═════════════════════════════════════ */
+.footer{
+  border-top:1px solid var(--border);
+  padding:clamp(24px,4vw,36px) var(--px);
+  display:flex;justify-content:space-between;align-items:center;
+  flex-wrap:wrap;gap:14px;
+  padding-bottom:max(clamp(24px,4vw,36px),env(safe-area-inset-bottom,0px));
+}
+.footer__brand{
+  font-family:'Cormorant Garamond',serif;font-size:15px;
+  letter-spacing:.3em;text-transform:uppercase;
+}
+.footer__meta{
+  font-size:8px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--dim);text-align:right;line-height:2;
+}
+
+/* ═══════════════════════════════════════
+   EXPERIENCE SVG ANIMATIONS
+═══════════════════════════════════════ */
+/* LED animated SVG */
+.led-bar{animation:ledFlicker 4s ease-in-out infinite;}
+.led-bar:nth-child(2){animation-delay:.3s;}
+.led-bar:nth-child(3){animation-delay:.6s;}
+.led-bar:nth-child(4){animation-delay:.15s;}
+.led-bar:nth-child(5){animation-delay:.45s;}
+.led-ring{animation:rotate 12s linear infinite;transform-origin:center;}
+.led-ring:nth-child(2){animation-direction:reverse;animation-duration:8s;}
+
+/* Audio wave */
+.wave-path{
+  stroke:var(--gold);stroke-width:1;fill:none;opacity:.6;
+}
+.wave-path:nth-child(1){animation:dash 1.2s linear infinite;}
+.wave-path:nth-child(2){animation:dash 1.6s linear infinite;animation-direction:reverse;stroke:rgba(196,150,61,.35);}
+.wave-path:nth-child(3){animation:dash 2s linear infinite;stroke:rgba(196,150,61,.18);}
+
+/* Cymatic rings */
+.cymatic-ring{
+  fill:none;stroke:var(--gold);
+  transform-origin:center;
+  animation:ripple 3s ease-out infinite;
+}
+.cymatic-ring:nth-child(1){animation-delay:0s;}
+.cymatic-ring:nth-child(2){animation-delay:.8s;}
+.cymatic-ring:nth-child(3){animation-delay:1.6s;}
+.cymatic-ring:nth-child(4){animation-delay:2.4s;}
+
+/* Hero ring animation */
+.hero-ring{
+  fill:none;stroke:var(--gold-d);stroke-width:.7;
+  animation:rotate 30s linear infinite;transform-origin:center;
+}
+.hero-ring:nth-child(2){animation-duration:20s;animation-direction:reverse;}
+.hero-ring:nth-child(3){animation-duration:14s;}
+.hero-kanji{
+  font-family:'EB Garamond',serif;
+  fill:rgba(196,150,61,.18);
+  animation:breathe 8s ease-in-out infinite;
+}
+.hero-dot{
+  fill:var(--gold);
+  animation:pulse 3s ease-in-out infinite;
+}
+.hero-dot:nth-child(odd){animation-delay:.5s;}
+.hero-dot:nth-child(3n){animation-delay:1s;}
+
+/* ═══════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════ */
+@media(max-width:900px){
+  .hero__inner{grid-template-columns:1fr;gap:32px;}
+  .hero__right{justify-content:flex-start;}
+  .hero-vis{max-width:260px;}
+  .exp-grid{grid-template-columns:1fr;}
+  .exp{border-bottom:1px solid var(--border);}
+  .exp:last-child{border-bottom:none;}
+  .artists-grid{grid-template-columns:1fr 1fr;}
+  .act-detail__inner{grid-template-columns:1fr;}
+}
+@media(max-width:600px){
+  :root{--px:18px;}
+  .nav__links{display:none;}
+  .nav__right{display:none;}
+  .ingredients-grid{grid-template-columns:1fr;}
+  .artists-grid{grid-template-columns:1fr;}
+  .flow-row{grid-template-columns:68px 32px 1fr;}
+  .flow-time{font-size:11px;padding:12px 8px;}
+  .act-card{width:clamp(180px,72vw,240px);}
+}
+@media(max-width:400px){
+  .hero__title{font-size:clamp(52px,18vw,80px);}
+  .act-card{width:clamp(170px,80vw,230px);}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ NAV ═══════════════════════════════════ -->
+<nav class="nav">
+  <div class="nav__brand">VIVĀRA</div>
+  <ul class="nav__links">
+    <li><a href="#acts">The Five Acts</a></li>
+    <li><a href="#experiences">The Spaces</a></li>
+    <li><a href="#flow">The Evening</a></li>
+  </ul>
+  <div class="nav__right">29 April · KRONOS · Chiba</div>
+</nav>
+
+<!-- ═══ HERO ═══════════════════════════════════ -->
+<section class="hero" id="hero">
+  <div class="hero__inner">
+    <div class="hero__left">
+      <div class="hero__eyebrow">A Private Ceremony · Tokyo</div>
+      <h1 class="hero__title">VIVĀRA</h1>
+      <p class="hero__desc">
+        <em>Living Alchemy in Ancestral Futurism</em> — connecting the senses through Past, Present &amp; Future. One evening. Five elements. Nine courses. Three spaces. Twenty-one guests.
+      </p>
+      <div class="hero__meta">
+        <div class="hero__meta-item"><strong>29 April 2025</strong>Date</div>
+        <div class="hero__meta-item"><strong>5 Acts · 9 Courses</strong>Structure</div>
+        <div class="hero__meta-item"><strong>21 Guests</strong>Capacity</div>
+        <div class="hero__meta-item"><strong>KRONOS · Chiba</strong>Venue</div>
+      </div>
+    </div>
+    <div class="hero__right">
+      <div class="hero-vis">
+        <svg class="hero-vis__svg" viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg">
+          <!-- outer rotating rings -->
+          <circle class="hero-ring" cx="140" cy="140" r="130" stroke-dasharray="6 8"/>
+          <circle class="hero-ring" cx="140" cy="140" r="105" stroke-dasharray="3 10"/>
+          <circle class="hero-ring" cx="140" cy="140" r="80" stroke-dasharray="2 14" style="stroke:rgba(196,150,61,.09)"/>
+          <!-- static inner rings -->
+          <circle fill="none" stroke="rgba(255,255,255,.04)" stroke-width=".8" cx="140" cy="140" r="60"/>
+          <circle fill="none" stroke="rgba(255,255,255,.03)" stroke-width=".6" cx="140" cy="140" r="40"/>
+          <!-- centre glow -->
+          <circle fill="rgba(196,150,61,.06)" cx="140" cy="140" r="28"/>
+          <circle fill="rgba(196,150,61,.1)" cx="140" cy="140" r="16" style="animation:breathe 4s ease-in-out infinite"/>
+          <!-- VIVARA text centre -->
+          <text class="hero-kanji" x="140" y="146" text-anchor="middle" font-size="11" letter-spacing="3">VIVĀRA</text>
+          <!-- Five act nodes around the circle -->
+          <!-- 1: Earth (bottom left) ~210° -->
+          <circle class="hero-dot" cx="75" cy="175" r="5" fill="#7a5828"/>
+          <circle fill="none" stroke="rgba(122,88,40,.4)" stroke-width=".8" cx="75" cy="175" r="10" style="animation:pulse 3s ease-in-out infinite"/>
+          <text font-family="EB Garamond,serif" font-size="18" fill="rgba(122,88,40,.7)" x="75" y="162" text-anchor="middle">土</text>
+          <!-- 2: Water (top left) ~150° -->
+          <circle class="hero-dot" cx="67" cy="108" r="5" fill="#1d4e6e" style="animation-delay:.4s"/>
+          <circle fill="none" stroke="rgba(29,78,110,.4)" stroke-width=".8" cx="67" cy="108" r="10" style="animation:pulse 3s ease-in-out infinite;animation-delay:.4s"/>
+          <text font-family="EB Garamond,serif" font-size="18" fill="rgba(29,78,110,.7)" x="67" y="95" text-anchor="middle">水</text>
+          <!-- 3: Breath (top centre) ~90° -->
+          <circle class="hero-dot" cx="140" cy="60" r="6" fill="#c4963d" style="animation-delay:.8s"/>
+          <circle fill="none" stroke="rgba(196,150,61,.5)" stroke-width=".9" cx="140" cy="60" r="12" style="animation:pulse 3s ease-in-out infinite;animation-delay:.8s"/>
+          <text font-family="EB Garamond,serif" font-size="20" fill="rgba(196,150,61,.8)" x="140" y="47" text-anchor="middle">息</text>
+          <!-- 4: Fire (top right) ~30° -->
+          <circle class="hero-dot" cx="213" cy="108" r="5" fill="#8a2c10" style="animation-delay:1.2s"/>
+          <circle fill="none" stroke="rgba(138,44,16,.4)" stroke-width=".8" cx="213" cy="108" r="10" style="animation:pulse 3s ease-in-out infinite;animation-delay:1.2s"/>
+          <text font-family="EB Garamond,serif" font-size="18" fill="rgba(138,44,16,.7)" x="213" y="95" text-anchor="middle">火</text>
+          <!-- 5: Ether (bottom right) ~330° -->
+          <circle class="hero-dot" cx="205" cy="175" r="5" fill="#4a3080" style="animation-delay:1.6s"/>
+          <circle fill="none" stroke="rgba(74,48,128,.4)" stroke-width=".8" cx="205" cy="175" r="10" style="animation:pulse 3s ease-in-out infinite;animation-delay:1.6s"/>
+          <text font-family="EB Garamond,serif" font-size="18" fill="rgba(74,48,128,.7)" x="205" y="162" text-anchor="middle">空</text>
+          <!-- connecting lines -->
+          <line x1="75" y1="175" x2="140" y2="140" stroke="rgba(196,150,61,.08)" stroke-width=".6"/>
+          <line x1="67" y1="108" x2="140" y2="140" stroke="rgba(196,150,61,.08)" stroke-width=".6"/>
+          <line x1="140" y1="60" x2="140" y2="140" stroke="rgba(196,150,61,.12)" stroke-width=".7"/>
+          <line x1="213" y1="108" x2="140" y2="140" stroke="rgba(196,150,61,.08)" stroke-width=".6"/>
+          <line x1="205" y1="175" x2="140" y2="140" stroke="rgba(196,150,61,.08)" stroke-width=".6"/>
+          <!-- labels -->
+          <text font-family="Tenor Sans,sans-serif" font-size="6" fill="rgba(237,231,223,.28)" letter-spacing="1.5" x="52" y="195" text-anchor="middle">EARTH</text>
+          <text font-family="Tenor Sans,sans-serif" font-size="6" fill="rgba(237,231,223,.28)" letter-spacing="1.5" x="46" y="108" text-anchor="middle">WATER</text>
+          <text font-family="Tenor Sans,sans-serif" font-size="6" fill="rgba(196,150,61,.5)" letter-spacing="1.5" x="140" y="32" text-anchor="middle">BREATH</text>
+          <text font-family="Tenor Sans,sans-serif" font-size="6" fill="rgba(237,231,223,.28)" letter-spacing="1.5" x="234" y="108" text-anchor="middle">FIRE</text>
+          <text font-family="Tenor Sans,sans-serif" font-size="6" fill="rgba(237,231,223,.28)" letter-spacing="1.5" x="228" y="195" text-anchor="middle">ETHER</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="rule"></div>
+
+<!-- ═══ FIVE ACTS ════════════════════════════════ -->
+<section class="acts" id="acts">
+  <div class="inner">
+    <div class="sec-label reveal">The Architecture of the Evening</div>
+    <h2 class="sec-title reveal rd1">Five Acts · Five Elements</h2>
+    <p class="sec-sub reveal rd2">
+      Each act maps to an elemental force — Earth, Water, Breath, Fire, Ether. The evening moves as a single ceremony across all five, connecting the body to geological memory and the senses to what is becoming.
+    </p>
+
+    <!-- Arc diagram -->
+    <div class="acts-arc reveal rd2">
+      <svg class="acts-arc__svg" viewBox="0 0 900 80" preserveAspectRatio="none" id="arc-svg">
+        <!-- base path -->
+        <path class="arc-path" d="M 50,65 C 180,12 340,5 450,14 C 560,23 720,18 850,55"/>
+        <!-- lit path draws in -->
+        <path class="arc-path-lit" id="arc-lit" d="M 50,65 C 180,12 340,5 450,14 C 560,23 720,18 850,55"/>
+        <!-- time axis labels -->
+        <text font-family="Tenor Sans,sans-serif" font-size="6" fill="rgba(237,231,223,.2)" letter-spacing="1.5" x="50" y="78" text-anchor="middle">3PM</text>
+        <text font-family="Tenor Sans,sans-serif" font-size="6" fill="rgba(237,231,223,.2)" letter-spacing="1.5" x="850" y="78" text-anchor="middle">8:30PM</text>
+        <!-- NODE 0: Earth -->
+        <circle class="arc-node" id="an0" cx="50" cy="65" r="6" style="--node-col:#7a5828"/>
+        <text class="arc-label-k" id="ak0" x="50" y="50" text-anchor="middle" style="--node-col:#7a5828">土</text>
+        <text class="arc-label-en" x="50" y="40" text-anchor="middle" font-size="8">I</text>
+        <!-- NODE 1: Water -->
+        <circle class="arc-node" id="an1" cx="225" cy="26" r="6" style="--node-col:#1d4e6e"/>
+        <text class="arc-label-k" id="ak1" x="225" y="13" text-anchor="middle" font-size="16" style="--node-col:#1d4e6e">水</text>
+        <text class="arc-label-en" x="225" y="4" text-anchor="middle" font-size="8">II</text>
+        <!-- NODE 2: Breath (peak) -->
+        <circle class="arc-node" id="an2" cx="450" cy="14" r="8" style="--node-col:#c4963d"/>
+        <circle fill="none" stroke="rgba(196,150,61,.15)" stroke-width=".7" cx="450" cy="14" r="14" id="an2-outer"/>
+        <text class="arc-label-k" id="ak2" x="450" y="0" text-anchor="middle" font-size="18" style="--node-col:#c4963d">息</text>
+        <text class="arc-label-en" x="450" y="35" text-anchor="middle" font-size="7" fill="rgba(196,150,61,.5)">THE DROP</text>
+        <!-- NODE 3: Fire -->
+        <circle class="arc-node" id="an3" cx="675" cy="22" r="6" style="--node-col:#8a2c10"/>
+        <text class="arc-label-k" id="ak3" x="675" y="9" text-anchor="middle" font-size="16" style="--node-col:#8a2c10">火</text>
+        <text class="arc-label-en" x="675" y="0" text-anchor="middle" font-size="8">IV</text>
+        <!-- NODE 4: Ether -->
+        <circle class="arc-node" id="an4" cx="850" cy="55" r="6" style="--node-col:#4a3080"/>
+        <text class="arc-label-k" id="ak4" x="850" y="42" text-anchor="middle" style="--node-col:#4a3080">空</text>
+        <text class="arc-label-en" x="850" y="32" text-anchor="middle" font-size="8">V</text>
+      </svg>
+    </div>
+
+    <!-- Act cards -->
+    <div class="acts-scroll reveal rd3">
+      <div class="acts-track" id="acts-track">
+        <div class="act-card active" data-i="0" style="--act-col:var(--c1)">
+          <span class="act-card__kanji">土</span>
+          <div class="act-card__num">Act I · 3:10 PM</div>
+          <div class="act-card__name">Earth</div>
+          <div class="act-card__jp">Tsuchi — The Descent</div>
+          <div class="act-card__incense">Vetiver · Myrrh · Black Oud</div>
+          <p class="act-card__quote">"You must first touch the ground before you can rise from it."</p>
+        </div>
+        <div class="act-card" data-i="1" style="--act-col:var(--c2)">
+          <span class="act-card__kanji">水</span>
+          <div class="act-card__num">Act II · ~4:15 PM</div>
+          <div class="act-card__name">Water</div>
+          <div class="act-card__jp">Mizu — Memory</div>
+          <div class="act-card__incense">Sandalwood · Lotus · Blue Musk</div>
+          <p class="act-card__quote">"Emotion is not weakness. It is the body's most ancient intelligence."</p>
+        </div>
+        <div class="act-card" data-i="2" style="--act-col:var(--gold)">
+          <span class="act-card__kanji">息</span>
+          <div class="act-card__num">Act III · ~5:15 PM</div>
+          <div class="act-card__name">Breath</div>
+          <div class="act-card__jp">Iki — The Hinge · The Drop</div>
+          <div class="act-card__incense">White Sage · Eucalyptus · Hinoki</div>
+          <p class="act-card__quote">"In the space between two breaths — all things become possible."</p>
+        </div>
+        <div class="act-card" data-i="3" style="--act-col:var(--c4)">
+          <span class="act-card__kanji">火</span>
+          <div class="act-card__num">Act IV · ~6:15 PM</div>
+          <div class="act-card__name">Fire</div>
+          <div class="act-card__jp">Hi — Transformation</div>
+          <div class="act-card__incense">Dragon's Blood · Amber · Frankincense</div>
+          <p class="act-card__quote">"To be changed, something must be willing to burn."</p>
+        </div>
+        <div class="act-card" data-i="4" style="--act-col:var(--c5)">
+          <span class="act-card__kanji">空</span>
+          <div class="act-card__num">Act V · ~7:30 PM</div>
+          <div class="act-card__name">Ether</div>
+          <div class="act-card__jp">Sora — The Communion</div>
+          <div class="act-card__incense">Jasmine · Neroli · Palo Santo</div>
+          <p class="act-card__quote">"You came as individuals. You leave as something larger."</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Act detail panel -->
+    <div class="act-detail reveal rd4" id="act-detail">
+      <div class="act-detail__inner" id="act-detail-inner">
+        <!-- populated by JS -->
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="rule"></div>
+
+<!-- ═══ THREE EXPERIENCES ══════════════════════ -->
+<section class="experiences" id="experiences">
+  <div class="inner">
+    <div class="sec-label reveal">The Three Active Spaces</div>
+    <h2 class="sec-title reveal rd1">The Spaces</h2>
+    <p class="sec-sub reveal rd2">
+      KRONOS is a pilgrimage route. Three rooms are activated — each a different frequency of the senses. Guests move between them across the evening.
+    </p>
+  </div>
+
+  <div class="inner">
+  <div class="exp-grid reveal rd3">
+
+    <!-- ── THE CULINARY CEREMONY ── -->
+    <div class="exp" style="--exp-col:#c4963d">
+      <!-- Fork/plate icon -->
+      <div class="exp__icon">
+        <svg viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
+          <!-- plate -->
+          <circle fill="none" stroke="rgba(196,150,61,.25)" stroke-width=".8" cx="26" cy="26" r="22"/>
+          <circle fill="none" stroke="rgba(196,150,61,.15)" stroke-width=".6" cx="26" cy="26" r="16"/>
+          <!-- steam lines -->
+          <path d="M20,14 C20,11 22,9 22,6" fill="none" stroke="rgba(196,150,61,.4)" stroke-width=".9" stroke-linecap="round" style="animation:pulse 3s ease-in-out infinite"/>
+          <path d="M26,12 C26,9 28,7 28,4" fill="none" stroke="rgba(196,150,61,.35)" stroke-width=".9" stroke-linecap="round" style="animation:pulse 3s ease-in-out infinite;animation-delay:.5s"/>
+          <path d="M32,14 C32,11 34,9 34,6" fill="none" stroke="rgba(196,150,61,.3)" stroke-width=".9" stroke-linecap="round" style="animation:pulse 3s ease-in-out infinite;animation-delay:1s"/>
+          <!-- bowl on plate -->
+          <ellipse fill="rgba(196,150,61,.08)" stroke="rgba(196,150,61,.3)" stroke-width=".7" cx="26" cy="28" rx="9" ry="5"/>
+          <!-- saffron threads -->
+          <line x1="22" y1="26" x2="30" y2="27" stroke="rgba(196,150,61,.6)" stroke-width=".6"/>
+          <line x1="23" y1="28" x2="29" y2="29" stroke="rgba(196,150,61,.4)" stroke-width=".5"/>
+          <!-- drop -->
+          <circle fill="rgba(196,150,61,.5)" cx="26" cy="26" r="2" style="animation:breathe 3s ease-in-out infinite"/>
+        </svg>
+      </div>
+      <div class="exp__num">Space 01 · The Pool</div>
+      <h3 class="exp__title">The Culinary<br/>Ceremony</h3>
+      <p class="exp__sub">Chuck Achike · Culinary Director</p>
+      <p class="exp__body">Nine courses, each synchronized to its elemental act. A blind tasting — no menu is given. Guests receive a washi notebook to write what they taste, feel, and remember. At Act V the full menu is revealed. The dishes themselves are the ceremony.</p>
+      <div class="exp__tags">
+        <span class="exp__tag">9 Courses</span>
+        <span class="exp__tag">Blind Tasting</span>
+        <span class="exp__tag">Shilajit · Tulsi · Saffron</span>
+        <span class="exp__tag">Washi Journal</span>
+      </div>
+    </div>
+
+    <!-- ── LED / AUDIO-REACTIVE ── -->
+    <div class="exp" style="--exp-col:#5588bb">
+      <div class="exp__icon">
+        <svg viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
+          <!-- LED pillar columns -->
+          <rect class="led-bar" x="8" y="20" width="6" height="20" fill="rgba(85,136,187,.25)" rx="1"/>
+          <rect class="led-bar" x="16" y="14" width="6" height="26" fill="rgba(85,136,187,.3)" rx="1"/>
+          <rect class="led-bar" x="24" y="10" width="6" height="30" fill="rgba(85,136,187,.4)" rx="1"/>
+          <rect class="led-bar" x="32" y="16" width="6" height="24" fill="rgba(85,136,187,.28)" rx="1"/>
+          <rect class="led-bar" x="40" y="22" width="6" height="18" fill="rgba(85,136,187,.22)" rx="1"/>
+          <!-- rotating ring -->
+          <circle class="led-ring" fill="none" stroke="rgba(85,136,187,.25)" stroke-width=".7" cx="26" cy="26" r="22" stroke-dasharray="4 8"/>
+          <circle class="led-ring" fill="none" stroke="rgba(196,150,61,.15)" stroke-width=".6" cx="26" cy="26" r="16" stroke-dasharray="2 6"/>
+          <!-- wave at bottom -->
+          <g transform="translate(3,44)">
+            <path class="wave-path" d="M0,3 C8,0 16,6 24,3 C32,0 40,6 48,3" stroke-dasharray="4 3"/>
+          </g>
+        </svg>
+      </div>
+      <div class="exp__num">Space 02 · Room 1</div>
+      <h3 class="exp__title">The LED Pillar<br/>of Present</h3>
+      <p class="exp__sub">Orbseer × Elijah Badua</p>
+      <p class="exp__body">XVISION transparent LED panels shaped as a pillar, backlit with atmospheric haze and projection. The visuals respond in real time to Elijah Badua's live performance — tambor evolving into synthesizer into full electronics. Guests move through Room 1 between every act.</p>
+      <div class="exp__tags">
+        <span class="exp__tag">Audio-Reactive</span>
+        <span class="exp__tag">XVISION LED</span>
+        <span class="exp__tag">Atmospheric Haze</span>
+        <span class="exp__tag">Live Electronics</span>
+      </div>
+    </div>
+
+    <!-- ── CYMATIC / HAPTIC ── -->
+    <div class="exp" style="--exp-col:#6e9e7a">
+      <div class="exp__icon">
+        <svg viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
+          <!-- sand bed -->
+          <ellipse fill="rgba(196,150,61,.06)" stroke="rgba(196,150,61,.15)" stroke-width=".7" cx="26" cy="36" rx="18" ry="5"/>
+          <!-- cymatic rings expanding -->
+          <circle class="cymatic-ring" cx="26" cy="30" r="4" stroke-opacity=".7"/>
+          <circle class="cymatic-ring" cx="26" cy="30" r="4" stroke-opacity=".5" style="animation-delay:.8s"/>
+          <circle class="cymatic-ring" cx="26" cy="30" r="4" stroke-opacity=".35" style="animation-delay:1.6s"/>
+          <circle class="cymatic-ring" cx="26" cy="30" r="4" stroke-opacity=".2" style="animation-delay:2.4s"/>
+          <!-- mountain silhouette -->
+          <path d="M8,38 L18,20 L26,28 L34,16 L46,38" fill="none" stroke="rgba(196,150,61,.2)" stroke-width=".7" stroke-linejoin="round"/>
+          <!-- vibration indicator -->
+          <line x1="26" y1="8" x2="26" y2="14" stroke="rgba(110,158,122,.5)" stroke-width=".8" style="animation:pulse 1.5s ease-in-out infinite"/>
+          <line x1="22" y1="9" x2="22" y2="13" stroke="rgba(110,158,122,.35)" stroke-width=".7" style="animation:pulse 1.5s ease-in-out infinite;animation-delay:.25s"/>
+          <line x1="30" y1="9" x2="30" y2="13" stroke="rgba(110,158,122,.35)" stroke-width=".7" style="animation:pulse 1.5s ease-in-out infinite;animation-delay:.5s"/>
+        </svg>
+      </div>
+      <div class="exp__num">Space 03 · Room 5 or 6 · TBD</div>
+      <h3 class="exp__title">The Haptic<br/>Room</h3>
+      <p class="exp__sub">Cymatic Installation</p>
+      <p class="exp__body">A private room filled with linens, stone, black sand, and aromatics — representing the Himalayan source of VIVĀRA shilajit. Cymatics make sound visible as geometric patterns in sand. 2–4 guests rotate through per intermission for a 3–5 minute immersive encounter.</p>
+      <div class="exp__tags">
+        <span class="exp__tag">Cymatic</span>
+        <span class="exp__tag">Black Sand</span>
+        <span class="exp__tag">Aromatics</span>
+        <span class="exp__tag">Private Rotation</span>
+      </div>
+    </div>
+
+  </div>
+  </div>
+</section>
+
+<div class="rule"></div>
+
+<!-- ═══ EVENING FLOW ════════════════════════════ -->
+<section class="flow-section" id="flow">
+  <div class="inner">
+    <div class="sec-label reveal">The Evening · At a Glance</div>
+    <h2 class="sec-title reveal rd1">The Full Descent</h2>
+    <p class="sec-sub reveal rd2">
+      From the moment of boarding to the final breath — the ceremony moves as one continuous arc through five elements, three spaces, and nine courses.
+    </p>
+
+    <div class="flow-diagram reveal rd3">
+
+      <div class="flow-row" style="--row-col:#c4963d">
+        <div class="flow-time act-t">1:30</div>
+        <div class="flow-spine"><div class="flow-line"></div><div class="flow-dot"></div><div class="flow-line"></div></div>
+        <div class="flow-body">
+          <div class="flow-tag act-tag">Departure</div>
+          <div class="flow-title">Bus · Tokyo → Chiba</div>
+          <div class="flow-desc">Hinoki scent. Sealed philosophy card. Ancestral ambient audio.</div>
+        </div>
+      </div>
+
+      <div class="flow-row" style="--row-col:#c4963d">
+        <div class="flow-time act-t">2:30</div>
+        <div class="flow-spine"><div class="flow-line"></div><div class="flow-dot"></div><div class="flow-line"></div></div>
+        <div class="flow-body">
+          <div class="flow-tag act-tag">Arrival</div>
+          <div class="flow-title">KRONOS · The Descent</div>
+          <div class="flow-desc">Guests descend the lower staircase. Earth &amp; oud scent. Tambor drone. Guided directly to the Pool.</div>
+        </div>
+      </div>
+
+      <div class="flow-row" style="--row-col:#c4963d">
+        <div class="flow-time act-t">3:00</div>
+        <div class="flow-spine"><div class="flow-line"></div><div class="flow-dot"></div><div class="flow-line"></div></div>
+        <div class="flow-body">
+          <div class="flow-tag act-tag">Opening</div>
+          <div class="flow-title">Brand Introduction · Yuto &amp; Austin</div>
+          <div class="flow-desc">VIVĀRA philosophy. Element 003. Three sacred ingredients named. No menu. Washi notebook placed at each seat.</div>
+          <div class="flow-pills"><span class="flow-pill gold">vivaradrops.com</span></div>
+        </div>
+      </div>
+
+      <!-- ACT I -->
+      <div class="flow-row" style="--row-col:#7a5828">
+        <div class="flow-time act-t">3:10</div>
+        <div class="flow-spine"><div class="flow-line"></div><div class="flow-dot"></div><div class="flow-line"></div></div>
+        <div class="flow-body">
+          <div class="flow-tag act-tag">Act I · 土 Earth</div>
+          <div class="flow-title">The Flame Opens · Courses 01–02</div>
+          <div class="flow-desc">4 guests light the corner incense altars. Elijah: tambor 5–10 min. Root Protocol + Mineral Offering.</div>
+          <div class="flow-pills"><span class="flow-pill">Vetiver · Myrrh · Oud</span><span class="flow-pill">The Pool</span></div>
+        </div>
+      </div>
+
+      <div class="flow-row inter" style="--row-col:#c4963d">
+        <div class="flow-time"></div>
+        <div class="flow-spine"><div class="flow-line"></div><div class="flow-dot" style="background:var(--border-md);border-color:var(--border-md);box-shadow:none;"></div><div class="flow-line"></div></div>
+        <div class="flow-body">
+          <div class="flow-tag">Intermission I</div>
+          <div class="flow-title">Room 1 Awakens · Haptic Rotation 1</div>
+          <div class="flow-desc">Notebooks. Elijah plays tambor in Room 1 as Orbseer visuals wake. 2–4 guests rotate to the Haptic Room.</div>
+          <div class="flow-pills"><span class="flow-pill gold">Room 1 · Haptic</span><span class="flow-pill">7–10 min</span></div>
+        </div>
+      </div>
+
+      <!-- ACT II -->
+      <div class="flow-row" style="--row-col:#1d4e6e">
+        <div class="flow-time act-t">~4:15</div>
+        <div class="flow-spine"><div class="flow-line"></div><div class="flow-dot"></div><div class="flow-line"></div></div>
+        <div class="flow-body">
+          <div class="flow-tag act-tag">Act II · 水 Water</div>
+          <div class="flow-title">New Flame · Courses 03–04</div>
+          <div class="flow-desc">Tide (sea urchin, hidden tulsi oil) + Emotion — each guest speaks one word before eating. The word is the rite.</div>
+          <div class="flow-pills"><span class="flow-pill">Sandalwood · Lotus</span><span class="flow-pill">The Pool</span></div>
+        </div>
+      </div>
+
+      <div class="flow-row inter">
+        <div class="flow-time"></div>
+        <div class="flow-spine"><div class="flow-line"></div><div class="flow-dot" style="background:var(--border-md);border-color:var(--border-md);box-shadow:none;"></div><div class="flow-line"></div></div>
+        <div class="flow-body">
+          <div class="flow-tag">Intermission II</div>
+          <div class="flow-title">Synthesizer Awakens · Haptic Rotation 2</div>
+          <div class="flow-desc">Elijah introduces synthesizer alongside tambor. Pillar begins to pulse. Haptic rotation 2.</div>
+          <div class="flow-pills"><span class="flow-pill gold">Room 1 · Haptic</span></div>
+        </div>
+      </div>
+
+      <!-- ACT III -->
+      <div class="flow-row" style="--row-col:#c4963d">
+        <div class="flow-time act-t">~5:15</div>
+        <div class="flow-spine"><div class="flow-line"></div><div class="flow-dot"></div><div class="flow-line"></div></div>
+        <div class="flow-body">
+          <div class="flow-tag act-tag">Act III · 息 Breath</div>
+          <div class="flow-title">Course 05 · Ma · The Drop</div>
+          <div class="flow-desc">Yuzu-shiso sorbet. Then in the corridor — warm tulsi water + Aether Drop. Not at the table. Not announced. The hinge.</div>
+          <div class="flow-pills"><span class="flow-pill gold">◉ The Drop · Signature Moment</span><span class="flow-pill">Sage · Eucalyptus</span></div>
+        </div>
+      </div>
+
+      <div class="flow-row inter">
+        <div class="flow-time"></div>
+        <div class="flow-spine"><div class="flow-line"></div><div class="flow-dot" style="background:var(--border-md);border-color:var(--border-md);box-shadow:none;"></div><div class="flow-line"></div></div>
+        <div class="flow-body">
+          <div class="flow-tag">Intermission III</div>
+          <div class="flow-title">Electronic Current Rising · Haptic Rotation 3</div>
+          <div class="flow-desc">Synthesizer leads. Pillar breathes faster. All remaining guests prioritised for Haptic Room.</div>
+          <div class="flow-pills"><span class="flow-pill gold">Room 1 · Haptic</span></div>
+        </div>
+      </div>
+
+      <!-- ACT IV -->
+      <div class="flow-row" style="--row-col:#8a2c10">
+        <div class="flow-time act-t">~6:15</div>
+        <div class="flow-spine"><div class="flow-line"></div><div class="flow-dot"></div><div class="flow-line"></div></div>
+        <div class="flow-body">
+          <div class="flow-tag act-tag">Act IV · 火 Fire</div>
+          <div class="flow-title">Main Course · Courses 06–07</div>
+          <div class="flow-desc">A5 Wagyu with Shilajit bone marrow lacquer. Binchotan char tableside — saffron-smoke fills the room before anyone tastes.</div>
+          <div class="flow-pills"><span class="flow-pill">Dragon's Blood · Frankincense</span><span class="flow-pill">The Pool</span></div>
+        </div>
+      </div>
+
+      <div class="flow-row inter">
+        <div class="flow-time"></div>
+        <div class="flow-spine"><div class="flow-line"></div><div class="flow-dot" style="background:var(--border-md);border-color:var(--border-md);box-shadow:none;"></div><div class="flow-line"></div></div>
+        <div class="flow-body">
+          <div class="flow-tag">Intermission IV · Peak</div>
+          <div class="flow-title">Room 1 Visual-Sonic Climax · Final Haptic</div>
+          <div class="flow-desc">Full electronic set. LED pillar at maximum — pulsing, fracturing, expanding. The visual-sonic peak of the evening.</div>
+          <div class="flow-pills"><span class="flow-pill gold">Room 1 Peak · 10–12 min</span></div>
+        </div>
+      </div>
+
+      <!-- ACT V -->
+      <div class="flow-row" style="--row-col:#4a3080">
+        <div class="flow-time act-t">~7:30</div>
+        <div class="flow-spine"><div class="flow-line"></div><div class="flow-dot"></div><div class="flow-line"></div></div>
+        <div class="flow-body">
+          <div class="flow-tag act-tag">Act V · 空 Ether</div>
+          <div class="flow-title">The Communion · Courses 08–09</div>
+          <div class="flow-desc">Shared reflections. Ancestor's Sweet + Ceremonial Cacao. Full menu revealed. Elijah returns for final 1–2 songs.</div>
+          <div class="flow-pills"><span class="flow-pill">Jasmine · Palo Santo</span><span class="flow-pill">The Pool</span></div>
+        </div>
+      </div>
+
+      <div class="flow-row" style="--row-col:#c4963d">
+        <div class="flow-time act-t">8:30</div>
+        <div class="flow-spine"><div class="flow-line"></div><div class="flow-dot"></div><div class="flow-line"></div></div>
+        <div class="flow-body">
+          <div class="flow-tag act-tag">Closing</div>
+          <div class="flow-title">Three-Breath Rite · Gratitude</div>
+          <div class="flow-desc">Chuck, Yuto &amp; Austin close the ceremony. One breath for Past · one for Present · one for Becoming. Element 003 gifted to each guest.</div>
+          <div class="flow-pills"><span class="flow-pill gold">Takeaway · Element 003</span></div>
+        </div>
+      </div>
+
+      <div class="flow-row" style="--row-col:#c4963d">
+        <div class="flow-time act-t">9:00</div>
+        <div class="flow-spine"><div class="flow-line"></div><div class="flow-dot"></div><div class="flow-line"></div></div>
+        <div class="flow-body">
+          <div class="flow-tag act-tag">Communion</div>
+          <div class="flow-title">Sound · Movement · Digestion</div>
+          <div class="flow-desc">Elijah's USB set. Guests move freely between Pool and Room 1. Not a party — movement as integration, sound as medicine.</div>
+        </div>
+      </div>
+
+      <div class="flow-row" style="--row-col:#c4963d">
+        <div class="flow-time act-t">10–11</div>
+        <div class="flow-spine"><div class="flow-line"></div><div class="flow-dot"></div><div class="flow-line"></div></div>
+        <div class="flow-body">
+          <div class="flow-tag act-tag">Return</div>
+          <div class="flow-title">Bus · Chiba → Tokyo</div>
+          <div class="flow-desc">Light drinks. Guests carry washi notebooks, menu card, and Element 003. The ceremony continues in reflection.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="rule"></div>
+
+<!-- ═══ SACRED INGREDIENTS ══════════════════════ -->
+<section>
+  <div class="inner">
+    <div class="sec-label reveal">The Three Sacred Ingredients</div>
+    <h2 class="sec-title reveal rd1">Element 003</h2>
+    <p class="sec-sub reveal rd2">VIVĀRA's Aether Drop is the protagonist of the evening — woven through every act, dissolved into broth, lacquered onto wagyu, steeped into the closing cacao.</p>
+
+    <div class="ingredients-grid reveal rd3">
+      <div class="ingredient">
+        <span class="ingredient__n">I</span>
+        <div class="ingredient__name">Shilajit</div>
+        <div class="ingredient__axis">Earth · Body · Geological Memory</div>
+        <p class="ingredient__body">Wild-crafted from the Karakoram Himalayas. Formed over millions of years in Himalayan stone. Present in Courses 01, 02, 06, 08, 09 — and as The Drop in Act III. The geological intelligence returned to the body as ceremony.</p>
+      </div>
+      <div class="ingredient">
+        <span class="ingredient__n">II</span>
+        <div class="ingredient__name">Tulsi</div>
+        <div class="ingredient__axis">Breath · Mind · Sacred Adaptogen</div>
+        <p class="ingredient__body">Holy basil of Ayurvedic tradition. Cold-press oil beneath the sea urchin (Course 03). Granita crust in the Ma sorbet (Course 05). Tincture finish in the closing cacao (Course 09). The warm tulsi water of The Drop.</p>
+      </div>
+      <div class="ingredient">
+        <span class="ingredient__n">III</span>
+        <div class="ingredient__name">Saffron</div>
+        <div class="ingredient__axis">Light · Mood · Alchemical Thread</div>
+        <p class="ingredient__body">Three threads floating in the first vessel. Full bloom in the gold bowl (Course 04). Smoke through binchotan (Course 07). Tempered into cipher chocolate (Course 08). Saffron is the colour of ceremony — visible before it is tasted.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="rule"></div>
+
+<!-- ═══ CREATIVE ENSEMBLE ══════════════════════ -->
+<section style="padding-bottom:clamp(48px,8vw,80px);">
+  <div class="inner">
+    <div class="sec-label reveal">The Artists of the Ceremony</div>
+    <h2 class="sec-title reveal rd1">Creative Ensemble</h2>
+
+    <div class="artists-grid reveal rd2">
+      <div class="artist">
+        <div class="artist__role">Culinary Director · London</div>
+        <div class="artist__name">Chuck Achike</div>
+        <div class="artist__arch">The Culinary Séance</div>
+        <p class="artist__body">Nine courses synchronized to element and intention. Binchotan char tableside. Blind tasting. The food itself is the ceremony object.</p>
+      </div>
+      <div class="artist">
+        <div class="artist__role">Musician · Los Angeles</div>
+        <div class="artist__name">Elijah Badua</div>
+        <div class="artist__arch">The Bridge of Past &amp; Future</div>
+        <p class="artist__body">Tambor → synthesizer → full electronics. Plays between every act in Room 1 as his sound drives the Orbseer visuals. Closes the ceremony in the Pool.</p>
+      </div>
+      <div class="artist">
+        <div class="artist__role">Digital Artist · Room 1</div>
+        <div class="artist__name">Orbseer</div>
+        <div class="artist__arch">The Pillar of Present</div>
+        <p class="artist__body">XVISION transparent LED + haze + projection. Audio-reactive to Elijah's signal in real time. Guests walk around it, not past it.</p>
+      </div>
+      <div class="artist">
+        <div class="artist__role">Cinematographer · Los Angeles</div>
+        <div class="artist__name">Adrien Oneiga</div>
+        <div class="artist__arch">The Observer</div>
+        <p class="artist__body">Red Komodo. Custom Zeiss lenses. Does not document — witnesses. Every frame answers: what does nourishment feel like when it becomes sacred?</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═════════════════════════════════ -->
+<footer class="footer">
+  <div class="footer__brand">VIVĀRA</div>
+  <div class="footer__meta">
+    <div>VIVARADROPS.COM</div>
+    <div>KRONOS · CHIBA · JAPAN</div>
+    <div>29 APRIL · 9 COURSES · 5 ACTS · 21 GUESTS</div>
+  </div>
+</footer>
+
+<script>
+/* ═══ SCROLL REVEAL ══════════════════════════════ */
+(function(){
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){ e.target.classList.add('on'); io.unobserve(e.target); }
+    });
+  },{threshold:.1,rootMargin:'0px 0px -24px 0px'});
+  document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+})();
+
+/* ═══ ARC IGNITION ═══════════════════════════════ */
+(function(){
+  var arcEl = document.getElementById('arc-svg');
+  var done = false;
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting && !done){
+        done = true;
+        // draw the lit path
+        setTimeout(function(){
+          var lit = document.getElementById('arc-lit');
+          if(lit) lit.classList.add('drawn');
+        }, 200);
+        // light nodes sequentially
+        [0,1,2,3,4].forEach(function(i){
+          setTimeout(function(){
+            var n = document.getElementById('an'+i);
+            var k = document.getElementById('ak'+i);
+            if(n) n.classList.add('lit');
+            if(k) k.classList.add('lit');
+          }, 400 + i*380);
+        });
+        io.unobserve(arcEl);
+      }
+    });
+  },{threshold:.3});
+  if(arcEl) io.observe(arcEl);
+})();
+
+/* ═══ ACT CARDS INTERACTION ══════════════════════ */
+var ACT_DATA = [
+  {
+    col:'#7a5828',
+    courses:[
+      {n:'01',name:'Root Protocol',sub:'Obsidian miso broth · Shilajit dissolution · 3 saffron threads · Hold vessel 30 sec'},
+      {n:'02',name:'Mineral Offering',sub:'Fermented burdock · Black garlic 90-day · Celeriac ash · Miso-Shilajit glaze on river stone'}
+    ],
+    notes:[
+      'The Flame ritual: 4 guests light the four corner incense altars simultaneously',
+      'Elijah opens with traditional tambor — 5 to 10 minutes, grounded and ancestral',
+      'No menu is given. Trust is the first course.',
+      'Product moment: Shilajit dissolved in broth — founders tell the origin story'
+    ]
+  },
+  {
+    col:'#1d4e6e',
+    courses:[
+      {n:'03',name:'Tide',sub:'Hokkaido sea urchin · Clarified dashi · Tulsi cold-press oil hidden beneath · Preserved lemon'},
+      {n:'04',name:'Emotion',sub:'Persimmon-sake broth · Saffron bloom · Handmade tofu skin · Each guest speaks one word before eating'}
+    ],
+    notes:[
+      'New Flame: 4 new guests light the Act II incense at the corner altars',
+      'Course 04: the one-word ritual — begins when the first guest chooses to speak',
+      'Chuck narrates: how memory lives in the body, how dashi and sake are forms of liquid memory',
+      'Tulsi introduced: its role as sacred adaptogen — breath, clarity, calm'
+    ]
+  },
+  {
+    col:'#c4963d',
+    courses:[
+      {n:'05',name:'Interval · Ma',sub:'Yuzu + green shiso sorbet · Tulsi granita crust · Saffron-thread bubble · The smell before the taste is the course'},
+      {n:'◉',name:'The Drop',sub:'Warm tulsi water + VIVĀRA Aether Drop — delivered in the corridor. Not at the table. Not announced. The hinge.'}
+    ],
+    notes:[
+      'Signature Moment: Act III is the pivot of the evening — the body is mid-ceremony',
+      'The Drop is delivered between acts in the corridor — a transition ritual, not a course',
+      'Chuck speaks to the Ayurvedic sourcing — deepest product story of the evening',
+      'Energy is fully alive by Act III: the ceremony is no longer arriving, it has begun'
+    ]
+  },
+  {
+    col:'#8a2c10',
+    courses:[
+      {n:'06',name:'The Offering · A5 Wagyu',sub:'Dry-aged 45 days · Shilajit bone marrow lacquer · "What are you ready for?" asked before each piece'},
+      {n:'07',name:'Ash & Ember',sub:'Charred root vegetables · Saffron miso glaze pre-char · Binchotan smoke tableside — scent arrives before taste'}
+    ],
+    notes:[
+      'Final Flame: Dragon\'s Blood, Amber, Frankincense — the heaviest incense of the ceremony',
+      'Chuck performs binchotan char tableside — theatrical, kinaesthetic',
+      'Shilajit bone marrow lacquer: the most visceral product moment of the evening',
+      'Confirm binchotan smoke ventilation with KRONOS before production lock'
+    ]
+  },
+  {
+    col:'#4a3080',
+    courses:[
+      {n:'08',name:"Ancestor's Sweet",sub:'Date + black sesame + Shilajit · Matcha kuzu kiri · Saffron cipher chocolate — hold on tongue, receive it'},
+      {n:'09',name:'Ceremonial Cacao',sub:'Cacao · Forest honey · Tulsi tincture · Saffron steep · Shilajit 100mg · Three swallows. Past → Present → Becoming.'}
+    ],
+    notes:[
+      'Ceremony pauses for shared reflection — each guest shares one word, image, or memory',
+      'Full menu revealed at Act V — guests compare washi notebook against the actual courses',
+      'Elijah returns to the Pool for 1–2 final songs — closes the sonic arc',
+      'The washi notebook is their personal menu — a ceremony relic to keep'
+    ]
+  }
+];
+
+function renderDetail(i){
+  var d = ACT_DATA[i];
+  var el = document.getElementById('act-detail-inner');
+  if(!el) return;
+  var coursesHtml = d.courses.map(function(c){
+    return '<div class="act-detail__course">' +
+      '<div class="act-detail__cn">'+c.n+'</div>' +
+      '<div class="act-detail__cname">'+c.name+'</div>' +
+      '<div class="act-detail__csub">'+c.sub+'</div></div>';
+  }).join('');
+  var notesHtml = d.notes.map(function(n){
+    return '<div class="act-detail__note">'+n+'</div>';
+  }).join('');
+  el.innerHTML =
+    '<div>' +
+      '<div class="act-detail__label">Courses</div>' +
+      '<div class="act-detail__courses">'+coursesHtml+'</div>' +
+    '</div>' +
+    '<div>' +
+      '<div class="act-detail__label">Ceremony Notes</div>' +
+      '<div class="act-detail__notes">'+notesHtml+'</div>' +
+    '</div>';
+  // re-trigger animation
+  el.style.animation = 'none';
+  el.offsetHeight; // reflow
+  el.style.animation = '';
+  document.getElementById('act-detail').style.borderColor = d.col;
+}
+
+// init detail
+renderDetail(0);
+
+// card click
+document.getElementById('acts-track').addEventListener('click', function(e){
+  var card = e.target.closest('.act-card');
+  if(!card) return;
+  var i = parseInt(card.dataset.i, 10);
+  document.querySelectorAll('.act-card').forEach(function(c){ c.classList.remove('active'); });
+  card.classList.add('active');
+  renderDetail(i);
+  // light arc node
+  document.querySelectorAll('.arc-node').forEach(function(n){ n.classList.remove('lit'); });
+  document.querySelectorAll('.arc-label-k').forEach(function(k){ k.classList.remove('lit'); });
+  var an = document.getElementById('an'+i);
+  var ak = document.getElementById('ak'+i);
+  if(an) an.classList.add('lit');
+  if(ak) ak.classList.add('lit');
+});
+
+/* ═══ DRAG SCROLL — acts track ══════════════════ */
+(function(){
+  var el = document.querySelector('.acts-scroll');
+  if(!el) return;
+  var down=false, startX=0, scrollL=0;
+  el.addEventListener('mousedown',function(e){down=true;startX=e.pageX-el.offsetLeft;scrollL=el.scrollLeft;});
+  document.addEventListener('mouseup',function(){down=false;});
+  el.addEventListener('mousemove',function(e){
+    if(!down) return;
+    e.preventDefault();
+    el.scrollLeft = scrollL - (e.pageX - el.offsetLeft - startX);
+  });
+})();
+</script>
+</body>
+</html>
