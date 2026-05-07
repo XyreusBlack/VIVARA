@@ -1,0 +1,1521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Reality Management Technologies — Neuroadaptive Hospitality · 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Syne:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════
+   TOKENS
+═══════════════════════════════════════ */
+:root {
+  --black:       #060606;
+  --black-soft:  #0B0B0B;
+  --off-white:   #EEE9E0;
+  --teal:        #6ECFC0;
+  --teal-line:   rgba(110,207,192,0.42);
+  --teal-glow:   rgba(110,207,192,0.18);
+  --teal-dim:    rgba(110,207,192,0.10);
+  --white-dim:   rgba(238,233,224,0.66);
+  --white-soft:  rgba(238,233,224,0.48);
+  --white-faint: rgba(238,233,224,0.16);
+  --white-ghost: rgba(238,233,224,0.07);
+}
+
+/* ═══════════════════════════════════════
+   RESET & BASE
+═══════════════════════════════════════ */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+html, body {
+  width:100%; height:100%;
+  background:var(--black);
+  color:var(--off-white);
+  font-family:'Syne', sans-serif;
+  font-weight:300;
+  overflow:hidden;
+  cursor:default;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+body::after {
+  content:'';
+  position:fixed; inset:0; z-index:9000;
+  pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  opacity:0.4;
+  mix-blend-mode:overlay;
+}
+
+/* ═══════════════════════════════════════
+   PERSISTENT UI
+═══════════════════════════════════════ */
+.wordmark {
+  position:fixed; top:32px; left:48px; z-index:500;
+  font-size:11.5px; font-weight:400; letter-spacing:0.3em;
+  text-transform:uppercase; color:rgba(238,233,224,0.36);
+}
+
+.nav-rail {
+  position:fixed; right:42px; top:50%; transform:translateY(-50%);
+  z-index:500;
+  display:flex; flex-direction:column; gap:13px; align-items:center;
+}
+
+.ndot {
+  width:7px; height:7px; border-radius:50%;
+  background:rgba(238,233,224,0.24);
+  cursor:pointer;
+  transition:background 0.3s, transform 0.3s;
+}
+.ndot.on { background:var(--teal); transform:scale(1.5); }
+.ndot:hover:not(.on) { background:rgba(238,233,224,0.6); }
+
+.counter {
+  position:fixed; bottom:36px; right:48px; z-index:500;
+  font-size:12px; font-weight:400; letter-spacing:0.22em;
+  color:rgba(238,233,224,0.4);
+}
+
+.hint {
+  position:fixed; bottom:36px; left:48px; z-index:500;
+  font-size:11px; letter-spacing:0.2em; text-transform:uppercase;
+  color:rgba(238,233,224,0.26);
+}
+
+/* ═══════════════════════════════════════
+   SLIDE ENGINE
+   .slide is ALWAYS position:absolute filling
+   the deck. Per-slide rules must NEVER override
+   position or display — only flex-direction
+   and alignment.
+═══════════════════════════════════════ */
+.deck { width:100%; height:100%; position:relative; }
+
+.slide {
+  position:absolute;
+  inset:0;
+  display:flex;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 0.7s cubic-bezier(0.4,0,0.2,1),
+             transform 0.7s cubic-bezier(0.4,0,0.2,1);
+  transform:translateY(24px);
+  overflow:hidden;
+}
+
+.slide.active {
+  opacity:1;
+  pointer-events:all;
+  transform:translateY(0);
+}
+
+.r { opacity:0; transform:translateY(20px); }
+.slide.active .r {
+  animation: rise 0.95s cubic-bezier(0.22,1,0.36,1) forwards;
+}
+.slide.active .r1 { animation-delay:0.10s; }
+.slide.active .r2 { animation-delay:0.24s; }
+.slide.active .r3 { animation-delay:0.38s; }
+.slide.active .r4 { animation-delay:0.52s; }
+.slide.active .r5 { animation-delay:0.66s; }
+.slide.active .r6 { animation-delay:0.80s; }
+.slide.active .r7 { animation-delay:0.94s; }
+
+@keyframes rise {
+  to { opacity:1; transform:translateY(0); }
+}
+
+@keyframes breath {
+  0%, 100% { transform:translate(-50%,-50%) scale(1);     opacity:1; }
+  50%      { transform:translate(-50%,-50%) scale(1.025); opacity:0.78; }
+}
+
+@keyframes glow-breath {
+  0%, 100% { transform:translate(-50%,-50%) scale(1);    opacity:0.7; }
+  50%      { transform:translate(-50%,-50%) scale(1.06); opacity:1;   }
+}
+
+/* ═══════════════════════════════════════
+   SHARED TYPOGRAPHY ATOMS
+═══════════════════════════════════════ */
+.lbl {
+  font-size:12px; font-weight:400; letter-spacing:0.32em;
+  text-transform:uppercase; color:var(--teal);
+  margin-bottom:36px;
+}
+
+.xl {
+  font-family:'Cormorant Garamond', serif;
+  font-size:clamp(44px, 4.8vw, 80px);
+  font-weight:300; line-height:1.07; letter-spacing:-0.012em;
+  color:var(--off-white);
+}
+.xl em, .hero em, .big em, .cta-h em, .shift-h em, .cat-h em { font-style:italic; color:var(--teal); }
+
+.hero {
+  font-family:'Cormorant Garamond', serif;
+  font-size:clamp(54px, 6vw, 100px);
+  font-weight:300; line-height:1.04; letter-spacing:-0.02em;
+  color:var(--off-white);
+}
+
+.big {
+  font-family:'Cormorant Garamond', serif;
+  font-size:clamp(36px, 3.8vw, 60px);
+  font-weight:300; line-height:1.14; letter-spacing:-0.01em;
+  color:var(--off-white);
+}
+
+.body {
+  font-size:17px; font-weight:300; line-height:1.72;
+  color:var(--white-dim); letter-spacing:0.005em;
+}
+
+.rule-h { width:56px; height:1px; background:var(--teal-line); }
+.rule-v { width:1px; height:52px; background:var(--teal-line); margin:0 auto; }
+
+.bg-ring {
+  position:absolute; border-radius:50%;
+  border:1px solid rgba(110,207,192,0.07);
+  top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  pointer-events:none;
+}
+
+#s1 .bg-ring, #s10 .bg-ring, #s3 .bg-ring {
+  animation: breath 9s ease-in-out infinite;
+}
+#s1 .bg-ring:nth-child(2),
+#s10 .bg-ring:nth-child(2),
+#s3 .bg-ring:nth-child(2)  { animation-duration:11s; animation-delay:1.5s; }
+#s1 .bg-ring:nth-child(3),
+#s10 .bg-ring:nth-child(3),
+#s3 .bg-ring:nth-child(3)  { animation-duration:13s; animation-delay:3s; }
+
+.v-line {
+  width:1px; flex-shrink:0;
+  background:var(--white-ghost);
+  align-self:stretch;
+}
+
+/* ═══════════════════════════════════════
+   SLIDE 01 — COVER
+═══════════════════════════════════════ */
+#s1 { align-items:center; justify-content:center; flex-direction:column; }
+
+#s1 .core {
+  position:relative; z-index:2;
+  text-align:center;
+  display:flex; flex-direction:column; align-items:center;
+  padding:0 32px;
+}
+
+.cover-eyebrow {
+  font-size:12.5px; font-weight:400; letter-spacing:0.34em;
+  text-transform:uppercase; color:var(--teal);
+}
+
+.cover-title {
+  font-family:'Cormorant Garamond', serif;
+  font-size:clamp(60px, 7.2vw, 120px);
+  font-weight:300; line-height:0.95; letter-spacing:-0.018em;
+  color:var(--off-white);
+  margin-top:36px;
+}
+.cover-title em { font-style:italic; color:var(--teal); }
+
+.cover-sub {
+  margin-top:40px;
+  font-size:13.5px; font-weight:400; letter-spacing:0.3em;
+  text-transform:uppercase; color:var(--white-soft);
+}
+
+.cover-tagline {
+  margin-top:20px;
+  font-family:'Cormorant Garamond', serif;
+  font-size:20px; font-style:italic; font-weight:300;
+  color:rgba(238,233,224,0.6);
+  letter-spacing:0.005em;
+}
+
+.cover-year {
+  margin-top:64px;
+  font-size:12px; letter-spacing:0.24em;
+  color:rgba(238,233,224,0.26);
+}
+
+/* ═══════════════════════════════════════
+   SLIDE 02 — THE PROBLEM
+═══════════════════════════════════════ */
+#s2 { flex-direction:row; }
+
+.col-half {
+  width:50%;
+  display:flex; flex-direction:column; justify-content:center;
+  padding:80px 64px;
+}
+
+.pull-q {
+  margin-top:48px;
+  padding-left:26px;
+  border-left:1px solid var(--teal-line);
+}
+.pull-q p {
+  font-family:'Cormorant Garamond', serif;
+  font-size:22px; font-style:italic; font-weight:300;
+  line-height:1.5; color:rgba(238,233,224,0.78);
+}
+
+.stat-row { margin-top:60px; display:flex; gap:60px; flex-wrap:wrap; }
+.stat-n {
+  font-family:'Cormorant Garamond', serif;
+  font-size:68px; font-weight:300; line-height:1;
+  color:var(--teal);
+}
+.stat-l {
+  font-size:12px; font-weight:400; letter-spacing:0.22em;
+  text-transform:uppercase; color:var(--white-soft);
+  margin-top:12px;
+}
+
+/* ═══════════════════════════════════════
+   SLIDE 03 — THE SHIFT
+═══════════════════════════════════════ */
+#s3 { align-items:center; justify-content:center; flex-direction:column; }
+
+.shift-glow {
+  position:absolute; top:50%; left:50%;
+  width:1200px; height:1200px;
+  transform:translate(-50%,-50%);
+  background:radial-gradient(circle,
+    rgba(110,207,192,0.10) 0%,
+    rgba(110,207,192,0.03) 28%,
+    transparent 60%);
+  pointer-events:none;
+  animation: glow-breath 11s ease-in-out infinite;
+}
+
+.shift-core {
+  position:relative; z-index:2;
+  text-align:center;
+  max-width:920px;
+  padding:0 40px;
+}
+
+.shift-h {
+  font-family:'Cormorant Garamond', serif;
+  font-size:clamp(52px, 6vw, 100px);
+  font-weight:300; line-height:1.02; letter-spacing:-0.022em;
+  color:var(--off-white);
+}
+
+.manifesto {
+  margin-top:64px;
+  display:flex; flex-direction:column; gap:0;
+}
+
+.man-line {
+  font-family:'Cormorant Garamond', serif;
+  font-size:clamp(22px, 2.4vw, 34px);
+  font-weight:300; font-style:italic;
+  color:rgba(238,233,224,0.82);
+  padding:22px 0;
+  letter-spacing:-0.005em;
+  border-top:1px solid var(--white-ghost);
+  transition:color 0.4s;
+}
+.man-line:last-child { border-bottom:1px solid var(--white-ghost); }
+.man-line:hover { color:var(--off-white); }
+
+/* ═══════════════════════════════════════
+   SLIDE 04 — INTUNE
+═══════════════════════════════════════ */
+#s4 { align-items:center; justify-content:center; flex-direction:column; }
+
+.wave-bg {
+  position:absolute; bottom:0; left:0; right:0; height:240px;
+  pointer-events:none; overflow:visible;
+  z-index:1;
+}
+.wave-bg svg { width:100%; height:100%; display:block; overflow:visible; }
+
+.s4-core {
+  text-align:center; max-width:880px;
+  position:relative; z-index:2;
+  padding:0 48px;
+}
+
+.s4-body {
+  font-size:17px; font-weight:300; line-height:1.78;
+  color:var(--white-dim);
+  margin-top:32px; max-width:620px;
+  margin-left:auto; margin-right:auto;
+}
+
+.feat-strip {
+  display:flex; margin-top:64px;
+  border-top:1px solid var(--white-ghost);
+  border-bottom:1px solid var(--white-ghost);
+}
+
+.feat {
+  flex:1; padding:32px 28px;
+  border-right:1px solid var(--white-ghost);
+  text-align:left;
+}
+.feat:last-child { border-right:none; }
+
+.feat-lbl {
+  font-size:11.5px; font-weight:400; letter-spacing:0.28em;
+  text-transform:uppercase; color:var(--teal); margin-bottom:14px;
+}
+.feat-val {
+  font-family:'Cormorant Garamond', serif;
+  font-size:20px; font-style:italic; font-weight:300;
+  color:var(--white-dim); line-height:1.42;
+}
+
+/* ═══════════════════════════════════════
+   SLIDE 05 — VIBEPRINT
+═══════════════════════════════════════ */
+#s5 { flex-direction:row; }
+
+.tl-col {
+  width:50%;
+  display:flex; flex-direction:column; justify-content:center;
+  padding:80px 64px;
+}
+
+.timeline { margin-top:48px; position:relative; }
+.timeline::before {
+  content:'';
+  position:absolute; left:0; top:18px; bottom:18px; width:1px;
+  background:linear-gradient(to bottom,
+    transparent 0%,
+    var(--teal-line) 15%,
+    var(--teal-line) 85%,
+    transparent 100%);
+}
+
+.tli {
+  display:flex; gap:28px;
+  padding:20px 0 20px 30px;
+  position:relative;
+}
+
+.tl-dot {
+  position:absolute; left:-5px; top:30px;
+  width:11px; height:11px; border-radius:50%;
+  background:var(--black); border:1px solid var(--teal);
+  transition:background 0.25s;
+}
+.tli:hover .tl-dot { background:var(--teal); }
+
+.tl-tag {
+  font-size:11px; font-weight:400; letter-spacing:0.26em;
+  text-transform:uppercase; color:rgba(110,207,192,0.75);
+  min-width:70px; padding-top:6px;
+}
+
+.tl-name {
+  font-family:'Cormorant Garamond', serif;
+  font-size:26px; font-weight:300;
+  color:var(--off-white); line-height:1.2;
+}
+.tl-desc {
+  font-size:14.5px; font-weight:300;
+  color:var(--white-dim); margin-top:5px; letter-spacing:0.015em;
+  line-height:1.55;
+}
+
+.s5-right {
+  width:50%;
+  display:flex; flex-direction:column; justify-content:center;
+  padding:80px 64px;
+}
+
+/* ═══════════════════════════════════════
+   SLIDE 06 — SENSORY SYSTEM
+═══════════════════════════════════════ */
+#s6 {
+  flex-direction:column;
+  align-items:stretch; justify-content:center;
+  padding:48px 60px;
+}
+
+.mod-head { text-align:center; margin-bottom:48px; }
+
+.mod-grid {
+  display:grid; grid-template-columns:repeat(4,1fr);
+  gap:1px; background:var(--white-ghost);
+  border:1px solid var(--white-ghost);
+}
+
+.mod-card {
+  background:var(--black); padding:34px 28px;
+  position:relative; overflow:hidden;
+  display:flex; flex-direction:column;
+  transition:background 0.4s;
+}
+.mod-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:1px;
+  background:transparent; transition:background 0.4s;
+}
+.mod-card:hover { background:rgba(110,207,192,0.04); }
+.mod-card:hover::before { background:var(--teal-line); }
+
+.mod-vis {
+  height:64px; margin-bottom:24px;
+  display:flex; align-items:center; justify-content:center;
+}
+.mod-vis svg { width:100%; height:100%; display:block; }
+
+.mod-n {
+  font-family:'Cormorant Garamond', serif;
+  font-size:13px; font-weight:300; letter-spacing:0.22em;
+  color:var(--teal); margin-bottom:16px;
+}
+.mod-name {
+  font-family:'Cormorant Garamond', serif;
+  font-size:30px; font-weight:300;
+  color:var(--off-white); line-height:1.18; margin-bottom:20px;
+}
+.mod-name em { font-style:italic; }
+
+.mod-body {
+  font-size:15.5px; font-weight:300;
+  color:var(--white-dim); line-height:1.68; letter-spacing:0.005em;
+}
+
+/* ═══════════════════════════════════════
+   SLIDE 07 — NERVOUS SYSTEM LAYER
+═══════════════════════════════════════ */
+#s7 {
+  flex-direction:column;
+  align-items:center; justify-content:center;
+  padding:60px 60px;
+}
+
+.arch-head { text-align:center; margin-bottom:56px; flex-shrink:0; }
+
+.arch-flow {
+  display:flex; align-items:stretch;
+  gap:0; width:100%; max-width:1140px;
+  flex-shrink:0;
+}
+
+.arch-node {
+  flex:1; padding:32px 26px;
+  border:1px solid var(--white-ghost);
+  position:relative; background:var(--black);
+  transition:border-color 0.35s;
+}
+.arch-node:not(:first-child) { border-left:none; }
+.arch-node:hover { border-color:var(--teal-line); z-index:1; }
+
+.arch-lbl {
+  font-size:11.5px; font-weight:400; letter-spacing:0.28em;
+  text-transform:uppercase; color:var(--teal); margin-bottom:14px;
+}
+.arch-name {
+  font-family:'Cormorant Garamond', serif;
+  font-size:25px; font-weight:300;
+  color:var(--off-white); line-height:1.22; margin-bottom:14px;
+}
+.arch-desc {
+  font-size:14.5px; font-weight:300;
+  color:var(--white-dim); line-height:1.65; letter-spacing:0.005em;
+}
+
+.arch-arr {
+  width:34px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  color:var(--teal-line); font-size:20px;
+  margin-top:-1px;
+}
+
+.arch-note {
+  margin-top:48px; text-align:center; flex-shrink:0;
+  font-family:'Cormorant Garamond', serif;
+  font-size:20px; font-style:italic; font-weight:300;
+  color:rgba(238,233,224,0.55); max-width:720px;
+  line-height:1.5;
+}
+
+/* ═══════════════════════════════════════
+   SLIDE 08 — LIVING PROOF
+═══════════════════════════════════════ */
+#s8 { flex-direction:row; }
+
+.proof-l {
+  width:44%; display:flex; flex-direction:column; justify-content:center;
+  padding:80px 64px;
+}
+.proof-r {
+  width:56%; display:flex; flex-direction:column; justify-content:center;
+  padding:80px 64px;
+}
+
+.proof-stats {
+  margin-top:52px;
+  border-top:1px solid var(--white-ghost);
+}
+.p-stat {
+  display:flex; align-items:baseline; gap:24px;
+  padding:28px 0; border-bottom:1px solid var(--white-ghost);
+}
+.p-num {
+  font-family:'Cormorant Garamond', serif;
+  font-size:68px; font-weight:300; line-height:1;
+  color:var(--teal); min-width:100px;
+}
+.p-title {
+  font-size:13.5px; font-weight:400; letter-spacing:0.14em;
+  text-transform:uppercase; color:var(--off-white);
+}
+.p-sub {
+  font-size:14.5px; font-weight:300;
+  color:var(--white-dim); margin-top:6px; line-height:1.5;
+}
+
+.sci-list { display:flex; flex-direction:column; gap:18px; }
+.sci {
+  display:flex; gap:22px;
+  padding:22px 24px;
+  border:1px solid var(--white-ghost);
+  position:relative;
+}
+.sci::before {
+  content:''; position:absolute; left:0; top:0; bottom:0;
+  width:2px; background:var(--teal-line);
+}
+.sci-c {
+  font-size:11.5px; font-weight:400; letter-spacing:0.2em;
+  text-transform:uppercase; color:var(--teal);
+  min-width:130px; padding-top:3px; flex-shrink:0;
+}
+.sci-f {
+  font-size:15px; font-weight:300;
+  color:var(--white-dim); line-height:1.6;
+}
+.sci-s {
+  font-family:'Cormorant Garamond', serif;
+  font-style:italic; font-size:13px;
+  color:rgba(238,233,224,0.4); margin-top:6px;
+}
+
+/* ═══════════════════════════════════════
+   SLIDE 09 — THE CATEGORY
+═══════════════════════════════════════ */
+#s9 {
+  flex-direction:column;
+  align-items:center; justify-content:center;
+  padding:60px 60px;
+}
+
+.cat-head { text-align:center; margin-bottom:52px; flex-shrink:0; }
+
+.cat-h {
+  font-family:'Cormorant Garamond', serif;
+  font-size:clamp(38px, 4vw, 64px);
+  font-weight:300; line-height:1.06; letter-spacing:-0.012em;
+  color:var(--off-white);
+}
+
+.cat-grid {
+  display:flex; align-items:stretch; gap:0;
+  width:100%; max-width:1120px; flex-shrink:0;
+}
+
+.cat-col {
+  flex:1; padding:42px 38px;
+  border:1px solid var(--white-ghost);
+}
+.cat-col-now { background:transparent; }
+.cat-col-next {
+  border-left:none;
+  background:linear-gradient(180deg,
+    rgba(110,207,192,0.04) 0%,
+    transparent 100%);
+}
+
+.cat-tag {
+  font-size:11.5px; font-weight:400; letter-spacing:0.3em;
+  text-transform:uppercase; color:var(--white-soft);
+  margin-bottom:32px;
+}
+.cat-col-next .cat-tag { color:var(--teal); }
+
+.cat-list { display:flex; flex-direction:column; gap:0; }
+
+.cat-item {
+  font-family:'Cormorant Garamond', serif;
+  font-size:20px; font-weight:300; font-style:italic;
+  padding:16px 0;
+  letter-spacing:-0.005em;
+  border-top:1px solid var(--white-ghost);
+}
+.cat-item:last-child { border-bottom:1px solid var(--white-ghost); }
+
+.cat-col-now  .cat-item { color:rgba(238,233,224,0.55); }
+.cat-col-next .cat-item { color:var(--off-white); }
+
+.cat-arrow {
+  width:52px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  color:var(--teal); font-size:24px;
+}
+
+.cat-note {
+  margin-top:48px; text-align:center; flex-shrink:0;
+  font-family:'Cormorant Garamond', serif;
+  font-size:20px; font-style:italic; font-weight:300;
+  color:rgba(238,233,224,0.6); max-width:760px;
+  line-height:1.55;
+}
+
+/* ═══════════════════════════════════════
+   SLIDE 10 — THE INVITATION
+═══════════════════════════════════════ */
+#s10 { align-items:center; justify-content:center; flex-direction:column; }
+
+.cta-core {
+  position:relative; z-index:2;
+  text-align:center; max-width:800px; padding:0 40px;
+}
+.cta-h {
+  font-family:'Cormorant Garamond', serif;
+  font-size:clamp(50px, 5.6vw, 92px);
+  font-weight:300; line-height:1.04; letter-spacing:-0.018em;
+  color:var(--off-white);
+}
+.cta-body {
+  font-size:17px; font-weight:300; line-height:1.74;
+  color:var(--white-dim); margin-top:28px; letter-spacing:0.005em;
+}
+
+.contact-row {
+  display:flex; gap:64px; justify-content:center;
+  margin-top:16px; flex-wrap:wrap;
+}
+.ct-card { text-align:left; }
+.ct-name {
+  font-size:12.5px; font-weight:500; letter-spacing:0.22em;
+  text-transform:uppercase; color:var(--off-white); margin-bottom:7px;
+}
+.ct-role {
+  font-size:13px; font-weight:300;
+  color:var(--white-dim); margin-bottom:5px; letter-spacing:0.02em;
+}
+.ct-mail {
+  font-size:13px; font-weight:300;
+  color:var(--teal); letter-spacing:0.02em;
+}
+
+.cta-foot {
+  position:absolute; bottom:36px;
+  font-size:11px; letter-spacing:0.22em;
+  color:rgba(238,233,224,0.18); text-transform:uppercase;
+}
+
+/* ═══════════════════════════════════════
+   RESPONSIVE — TABLET
+═══════════════════════════════════════ */
+@media (max-width:1100px) {
+  .col-half, .tl-col, .s5-right { padding:64px 44px; }
+  .proof-l, .proof-r { padding:64px 44px; }
+  .arch-flow, .cat-grid { max-width:100%; }
+  #s6 { padding:40px 36px; }
+  #s7, #s9 { padding:48px 40px; }
+}
+
+/* ═══════════════════════════════════════
+   RESPONSIVE — MOBILE
+═══════════════════════════════════════ */
+@media (max-width:920px) {
+  .wordmark { left:24px; top:24px; font-size:10.5px; letter-spacing:0.26em; }
+  .hint     { left:24px; bottom:28px; font-size:10px; letter-spacing:0.18em; }
+  .counter  { right:24px; bottom:28px; font-size:11px; }
+  .nav-rail { display:none; }
+
+  .slide {
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+
+  #s2, #s5, #s8 { flex-direction:column; }
+  .col-half, .tl-col, .s5-right, .proof-l, .proof-r {
+    width:100%; padding:64px 28px 48px;
+  }
+  .v-line { display:none; }
+
+  .mod-grid { grid-template-columns:1fr 1fr; }
+  .arch-flow { flex-direction:column; }
+  .arch-arr { transform:rotate(90deg); padding:8px 0; height:32px; }
+  .cat-grid  { flex-direction:column; }
+  .cat-col-next { border-top:none; border-left:1px solid var(--white-ghost); }
+  .cat-arrow { transform:rotate(90deg); padding:8px 0; height:32px; width:auto; }
+
+  .contact-row { flex-direction:column; gap:24px; align-items:center; }
+  .ct-card { text-align:center; }
+
+  .body { font-size:16.5px; line-height:1.7; }
+  .lbl { font-size:11.5px; margin-bottom:26px; }
+
+  #s1 .core { padding:0 24px; }
+  .cover-title { line-height:1.0; }
+  .cover-sub { font-size:12px; }
+  .cover-tagline { font-size:18px; }
+
+  #s2 .col-half:first-child { padding-top:80px; }
+  .pull-q p { font-size:19px; }
+  .stat-n { font-size:62px; }
+
+  #s3 { padding:80px 0; align-items:flex-start; }
+  .shift-core { padding:0 28px; }
+  .shift-glow { width:140vw; height:140vw; }
+  .manifesto { margin-top:44px; }
+  .man-line { padding:20px 0; }
+
+  #s4 { padding:64px 0; align-items:flex-start; }
+  .s4-core { padding:0 28px; }
+  .s4-body { font-size:16.5px; }
+  .feat-strip { flex-direction:column; }
+  .feat {
+    border-right:none;
+    border-bottom:1px solid var(--white-ghost);
+    padding:24px 26px;
+  }
+  .feat:last-child { border-bottom:none; }
+  .feat-val { font-size:19px; }
+  .wave-bg { height:160px; opacity:0.6; }
+
+  #s5 .timeline { margin-top:36px; }
+  .tl-tag { min-width:62px; font-size:10.5px; }
+  .tl-name { font-size:24px; }
+  .tl-desc { font-size:14px; }
+
+  #s6 { padding:60px 24px; align-items:flex-start; justify-content:flex-start; }
+  .mod-head { margin-bottom:36px; }
+  .mod-card { padding:30px 26px; }
+  .mod-name { font-size:27px; }
+  .mod-body { font-size:15px; }
+  .mod-vis { height:56px; margin-bottom:20px; }
+
+  #s7 { padding:60px 24px; align-items:flex-start; justify-content:flex-start; }
+  .arch-head { margin-bottom:36px; }
+  .arch-node { padding:26px 24px; }
+  .arch-name { font-size:23px; }
+  .arch-desc { font-size:14px; }
+  .arch-note { margin-top:36px; font-size:18px; }
+
+  .proof-stats { margin-top:40px; }
+  .p-num { font-size:60px; min-width:88px; }
+  .p-stat { gap:20px; padding:24px 0; }
+  .p-title { font-size:13px; }
+  .p-sub { font-size:14px; }
+  .sci { padding:20px 22px; gap:14px; flex-direction:column; }
+  .sci-c { padding-top:0; min-width:0; }
+  .sci-f { font-size:14.5px; }
+
+  #s9 { padding:60px 24px; align-items:flex-start; justify-content:flex-start; }
+  .cat-head { margin-bottom:36px; }
+  .cat-col { padding:32px 26px; }
+  .cat-item { font-size:18.5px; padding:14px 0; }
+  .cat-note { margin-top:36px; font-size:17.5px; }
+
+  #s10 { justify-content:flex-start; padding:80px 0 60px; }
+  .cta-core { padding:0 28px; }
+  .cta-body { font-size:16.5px; }
+  .cta-foot { position:static; margin-top:60px; padding-bottom:36px; }
+}
+
+/* ═══════════════════════════════════════
+   RESPONSIVE — NARROW PHONE
+═══════════════════════════════════════ */
+@media (max-width:520px) {
+  .mod-grid { grid-template-columns:1fr; }
+  .stat-row { gap:32px; }
+  .stat-n { font-size:56px; }
+  .pull-q p { font-size:18px; }
+  .arch-name { font-size:21px; }
+  .feat-val { font-size:17.5px; }
+  .man-line { font-size:19px; }
+  .cat-item { font-size:17px; }
+}
+
+@media (max-height:600px) and (orientation:landscape) {
+  .slide { overflow-y:auto; }
+  #s3, #s6, #s7, #s9 { align-items:flex-start; justify-content:flex-start; padding-top:48px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── PERSISTENT UI ── -->
+<div class="wordmark">RMT · Confidential · 2026</div>
+<div class="nav-rail" id="rail"></div>
+<div class="counter" id="ctr">01 / 10</div>
+<div class="hint">↑ ↓ &nbsp;/&nbsp; scroll &nbsp;/&nbsp; swipe</div>
+
+<div class="deck">
+
+<!-- ════════════════════════════════════
+     SLIDE 01 · COVER
+════════════════════════════════════ -->
+<div class="slide active" id="s1">
+  <div class="bg-ring" style="width:820px;height:820px;"></div>
+  <div class="bg-ring" style="width:560px;height:560px;"></div>
+  <div class="bg-ring" style="width:310px;height:310px;"></div>
+
+  <div class="core">
+    <div class="cover-eyebrow r r1">Reality Management Technologies</div>
+    <div class="cover-title r r2">
+      Architecture<br>that <em>listens.</em>
+    </div>
+    <div class="rule-h r r3" style="margin-top:42px;"></div>
+    <div class="cover-sub r r4">A New Category — Neuroadaptive Hospitality</div>
+    <div class="cover-tagline r r5">The nervous system layer for the future of luxury.</div>
+    <div class="cover-year r r6">realitymgmt.com · 2026</div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     SLIDE 02 · THE PROBLEM
+════════════════════════════════════ -->
+<div class="slide" id="s2">
+  <div class="col-half">
+    <div class="lbl r r1">The Problem</div>
+    <div class="xl r r2">
+      Visually beautiful.<br><em>Physiologically blind.</em>
+    </div>
+    <div class="body r r3" style="margin-top:36px; max-width:480px;">
+      The world's finest properties deliver one experience to every body —
+      regardless of arousal state, sleep debt, or autonomic load on arrival.
+      The architecture is exquisite. The awareness is absent.
+    </div>
+    <div class="pull-q r r4">
+      <p>Every guest arrives carrying a physiological state.
+      Hospitality is not yet equipped to read it,
+      respond to it, or remember it.</p>
+    </div>
+  </div>
+
+  <div class="v-line"></div>
+
+  <div class="col-half">
+    <div class="lbl r r1">Our Position</div>
+    <div class="big r r2">
+      We close the gap between<br>
+      <em>aesthetic intelligence</em><br>
+      and physiological awareness.
+    </div>
+    <div class="stat-row r r3">
+      <div>
+        <div class="stat-n">3</div>
+        <div class="stat-l">Issued Patents</div>
+      </div>
+      <div>
+        <div class="stat-n">30+</div>
+        <div class="stat-l">Years R&D</div>
+      </div>
+      <div>
+        <div class="stat-n">2022</div>
+        <div class="stat-l">Live Since</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     SLIDE 03 · THE SHIFT
+════════════════════════════════════ -->
+<div class="slide" id="s3">
+  <div class="shift-glow"></div>
+  <div class="bg-ring" style="width:1000px;height:1000px;"></div>
+  <div class="bg-ring" style="width:680px;height:680px;"></div>
+
+  <div class="shift-core">
+    <div class="lbl r r1">The Shift</div>
+    <div class="shift-h r r2">
+      The nervous system<br>is the <em>new luxury.</em>
+    </div>
+
+    <div class="manifesto">
+      <div class="man-line r r3">The room reads the body.</div>
+      <div class="man-line r r4">The environment regulates.</div>
+      <div class="man-line r r5">The architecture remembers.</div>
+      <div class="man-line r r6">The property becomes aware.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     SLIDE 04 · INTUNE
+════════════════════════════════════ -->
+<div class="slide" id="s4">
+  <div class="wave-bg">
+    <svg viewBox="0 0 1440 240" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,120 C120,52 240,188 360,120 C480,52 600,188 720,120 C840,52 960,188 1080,120 C1200,52 1320,188 1440,120"
+            stroke="rgba(110,207,192,0.55)" stroke-width="1" fill="none">
+        <animateTransform attributeName="transform" type="translate" values="0,0;-360,0;0,0" dur="14s" repeatCount="indefinite"/>
+      </path>
+      <path d="M0,140 C90,72 270,168 360,140 C540,108 630,72 720,140 C810,180 990,68 1080,140 C1170,180 1350,88 1440,140"
+            stroke="rgba(110,207,192,0.32)" stroke-width="1" fill="none">
+        <animateTransform attributeName="transform" type="translate" values="0,0;360,0;0,0" dur="20s" repeatCount="indefinite"/>
+      </path>
+      <path d="M0,100 C180,150 360,60 540,100 C720,140 900,50 1080,100 C1260,150 1350,120 1440,100"
+            stroke="rgba(110,207,192,0.18)" stroke-width="1" fill="none">
+        <animateTransform attributeName="transform" type="translate" values="0,0;-180,0;0,0" dur="9s" repeatCount="indefinite"/>
+      </path>
+    </svg>
+  </div>
+
+  <div class="s4-core">
+    <div class="lbl r r1">InTune — Invisible Intake</div>
+    <div class="hero r r2">
+      The guest <em>speaks.</em><br>The space listens.
+    </div>
+    <div class="s4-body r r3">
+      Thirty seconds of voice. No wearables. No questions.
+      The autonomic state is read before the elevator arrives.
+      The room is calibrated before the door opens.
+    </div>
+    <div class="feat-strip r r4">
+      <div class="feat">
+        <div class="feat-lbl">Reads</div>
+        <div class="feat-val">Sympathetic / parasympathetic balance</div>
+      </div>
+      <div class="feat">
+        <div class="feat-lbl">Derives</div>
+        <div class="feat-val">Cognitive arousal & emotional coherence</div>
+      </div>
+      <div class="feat">
+        <div class="feat-lbl">Sets</div>
+        <div class="feat-val">Personalized binaural & light protocol</div>
+      </div>
+      <div class="feat">
+        <div class="feat-lbl">Feeds</div>
+        <div class="feat-val">VibePrint — the memory layer</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     SLIDE 05 · VIBEPRINT
+════════════════════════════════════ -->
+<div class="slide" id="s5">
+  <div class="tl-col">
+    <div class="lbl r r1">VibePrint — The Memory Layer</div>
+    <div class="xl r r2">
+      A property<br>that remembers<br>you <em>biologically.</em>
+    </div>
+
+    <div class="timeline r r3">
+      <div class="tli">
+        <div class="tl-dot"></div>
+        <div class="tl-tag">Night 1</div>
+        <div>
+          <div class="tl-name">The body is read.</div>
+          <div class="tl-desc">Baseline HRV. Arousal mapped. Preferences captured.</div>
+        </div>
+      </div>
+      <div class="tli">
+        <div class="tl-dot"></div>
+        <div class="tl-tag">Night 2</div>
+        <div>
+          <div class="tl-name">The room responds.</div>
+          <div class="tl-desc">Light, sound, and breath timing adjust to response data.</div>
+        </div>
+      </div>
+      <div class="tli">
+        <div class="tl-dot"></div>
+        <div class="tl-tag">Night 3</div>
+        <div>
+          <div class="tl-name">The architecture tunes.</div>
+          <div class="tl-desc">Delta threshold mapped. Deep sleep protocol stabilized.</div>
+        </div>
+      </div>
+      <div class="tli">
+        <div class="tl-dot"></div>
+        <div class="tl-tag">Return</div>
+        <div>
+          <div class="tl-name">The property remembers.</div>
+          <div class="tl-desc">No intake required. The space begins before they ask.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="v-line"></div>
+
+  <div class="s5-right">
+    <div class="lbl r r1">Memory Stored in the Body</div>
+    <div class="big r r2">
+      By the third night,<br>the architecture has<br>
+      <em>tuned itself</em><br>to your biology.
+    </div>
+    <div class="body r r3" style="margin-top:36px; max-width:400px;">
+      Most properties reset at checkout. VibePrint accumulates —
+      across every session, every modality, every stay.
+      Returning guests reactivate the memory layer instantly.
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     SLIDE 06 · SENSORY SYSTEM
+════════════════════════════════════ -->
+<div class="slide" id="s6">
+  <div class="mod-head">
+    <div class="lbl r r1" style="margin-bottom:18px;">The Sensory System</div>
+    <div class="xl r r2" style="font-size:clamp(32px,3.4vw,54px);">
+      Four channels. <em>One coherent state.</em>
+    </div>
+  </div>
+
+  <div class="mod-grid r r3">
+
+    <!-- 01 · BED -->
+    <div class="mod-card">
+      <div class="mod-vis">
+        <svg viewBox="0 0 240 60" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+          <line x1="20" y1="30" x2="220" y2="30" stroke="rgba(110,207,192,0.18)" stroke-width="0.5"/>
+          <g fill="#6ECFC0">
+            <circle cx="35"  cy="30" r="2.6" opacity="0.25">
+              <animate attributeName="opacity" values="0.25;1;0.25" dur="2.4s" begin="0s"     repeatCount="indefinite"/>
+              <animate attributeName="r"       values="2.4;3.4;2.4" dur="2.4s" begin="0s"     repeatCount="indefinite"/>
+            </circle>
+            <circle cx="61"  cy="30" r="2.6" opacity="0.25">
+              <animate attributeName="opacity" values="0.25;1;0.25" dur="2.4s" begin="0.18s"  repeatCount="indefinite"/>
+              <animate attributeName="r"       values="2.4;3.4;2.4" dur="2.4s" begin="0.18s"  repeatCount="indefinite"/>
+            </circle>
+            <circle cx="87"  cy="30" r="2.6" opacity="0.25">
+              <animate attributeName="opacity" values="0.25;1;0.25" dur="2.4s" begin="0.36s"  repeatCount="indefinite"/>
+              <animate attributeName="r"       values="2.4;3.4;2.4" dur="2.4s" begin="0.36s"  repeatCount="indefinite"/>
+            </circle>
+            <circle cx="113" cy="30" r="2.6" opacity="0.25">
+              <animate attributeName="opacity" values="0.25;1;0.25" dur="2.4s" begin="0.54s"  repeatCount="indefinite"/>
+              <animate attributeName="r"       values="2.4;3.4;2.4" dur="2.4s" begin="0.54s"  repeatCount="indefinite"/>
+            </circle>
+            <circle cx="139" cy="30" r="2.6" opacity="0.25">
+              <animate attributeName="opacity" values="0.25;1;0.25" dur="2.4s" begin="0.72s"  repeatCount="indefinite"/>
+              <animate attributeName="r"       values="2.4;3.4;2.4" dur="2.4s" begin="0.72s"  repeatCount="indefinite"/>
+            </circle>
+            <circle cx="165" cy="30" r="2.6" opacity="0.25">
+              <animate attributeName="opacity" values="0.25;1;0.25" dur="2.4s" begin="0.90s"  repeatCount="indefinite"/>
+              <animate attributeName="r"       values="2.4;3.4;2.4" dur="2.4s" begin="0.90s"  repeatCount="indefinite"/>
+            </circle>
+            <circle cx="191" cy="30" r="2.6" opacity="0.25">
+              <animate attributeName="opacity" values="0.25;1;0.25" dur="2.4s" begin="1.08s"  repeatCount="indefinite"/>
+              <animate attributeName="r"       values="2.4;3.4;2.4" dur="2.4s" begin="1.08s"  repeatCount="indefinite"/>
+            </circle>
+            <circle cx="217" cy="30" r="2.6" opacity="0.25">
+              <animate attributeName="opacity" values="0.25;1;0.25" dur="2.4s" begin="1.26s"  repeatCount="indefinite"/>
+              <animate attributeName="r"       values="2.4;3.4;2.4" dur="2.4s" begin="1.26s"  repeatCount="indefinite"/>
+            </circle>
+          </g>
+        </svg>
+      </div>
+      <div class="mod-n">01 · Vibration</div>
+      <div class="mod-name">Reality <em>Bed</em></div>
+      <div class="mod-body">
+        Vibrotactile resonance. Bone-conduction sound. Embedded biometrics.
+        The bed reads the body while it regulates it.
+      </div>
+    </div>
+
+    <!-- 02 · LIGHT -->
+    <div class="mod-card">
+      <div class="mod-vis">
+        <svg viewBox="0 0 240 60" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+          <g transform="translate(120,30)">
+            <g stroke="rgba(110,207,192,0.55)" stroke-width="0.8" stroke-linecap="round">
+              <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="80s" repeatCount="indefinite"/>
+              <line x1="0"     y1="-23"   x2="0"    y2="-15"/>
+              <line x1="16.3"  y1="-16.3" x2="10.6" y2="-10.6"/>
+              <line x1="23"    y1="0"     x2="15"   y2="0"/>
+              <line x1="16.3"  y1="16.3"  x2="10.6" y2="10.6"/>
+              <line x1="0"     y1="23"    x2="0"    y2="15"/>
+              <line x1="-16.3" y1="16.3"  x2="-10.6" y2="10.6"/>
+              <line x1="-23"   y1="0"     x2="-15"  y2="0"/>
+              <line x1="-16.3" y1="-16.3" x2="-10.6" y2="-10.6"/>
+            </g>
+            <circle r="9" fill="none" stroke="rgba(110,207,192,0.22)" stroke-width="0.5"/>
+            <circle r="4" fill="#6ECFC0">
+              <animate attributeName="opacity" values="0.55;1;0.55" dur="3.6s" repeatCount="indefinite"/>
+              <animate attributeName="r"       values="3.4;4.6;3.4" dur="3.6s" repeatCount="indefinite"/>
+            </circle>
+          </g>
+        </svg>
+      </div>
+      <div class="mod-n">02 · Light</div>
+      <div class="mod-name"><em>InLuma</em> Spectrum</div>
+      <div class="mod-body">
+        A spectrum that breathes with the nervous system.
+        Light tuned to the body — not the clock.
+      </div>
+    </div>
+
+    <!-- 03 · WATER -->
+    <div class="mod-card">
+      <div class="mod-vis">
+        <svg viewBox="0 0 240 60" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+          <g transform="translate(120,30)" fill="none" stroke="#6ECFC0" stroke-width="0.7">
+            <ellipse rx="0" ry="0">
+              <animate attributeName="rx"      values="0;58"     dur="4s" begin="0s"   repeatCount="indefinite"/>
+              <animate attributeName="ry"      values="0;14"     dur="4s" begin="0s"   repeatCount="indefinite"/>
+              <animate attributeName="opacity" values="0.85;0"   dur="4s" begin="0s"   repeatCount="indefinite"/>
+            </ellipse>
+            <ellipse rx="0" ry="0">
+              <animate attributeName="rx"      values="0;58"     dur="4s" begin="1.3s" repeatCount="indefinite"/>
+              <animate attributeName="ry"      values="0;14"     dur="4s" begin="1.3s" repeatCount="indefinite"/>
+              <animate attributeName="opacity" values="0.85;0"   dur="4s" begin="1.3s" repeatCount="indefinite"/>
+            </ellipse>
+            <ellipse rx="0" ry="0">
+              <animate attributeName="rx"      values="0;58"     dur="4s" begin="2.6s" repeatCount="indefinite"/>
+              <animate attributeName="ry"      values="0;14"     dur="4s" begin="2.6s" repeatCount="indefinite"/>
+              <animate attributeName="opacity" values="0.85;0"   dur="4s" begin="2.6s" repeatCount="indefinite"/>
+            </ellipse>
+            <circle r="1.6" fill="#6ECFC0" stroke="none"/>
+          </g>
+        </svg>
+      </div>
+      <div class="mod-n">03 · Water</div>
+      <div class="mod-name">Resonance <em>Therm</em></div>
+      <div class="mod-body">
+        Frequency carried through water — the deepest channel of regulation.
+        Sound the body cannot ignore.
+      </div>
+    </div>
+
+    <!-- 04 · FIELD -->
+    <div class="mod-card">
+      <div class="mod-vis">
+        <svg viewBox="0 0 240 60" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+          <g stroke="rgba(110,207,192,0.22)" stroke-width="0.5" fill="none">
+            <animate attributeName="opacity" values="0.3;0.95;0.3" dur="3.2s" repeatCount="indefinite"/>
+            <line x1="40"  y1="22" x2="80"  y2="40"/>
+            <line x1="80"  y1="40" x2="120" y2="18"/>
+            <line x1="120" y1="18" x2="160" y2="42"/>
+            <line x1="160" y1="42" x2="200" y2="24"/>
+            <line x1="40"  y1="22" x2="120" y2="18"/>
+            <line x1="80"  y1="40" x2="160" y2="42"/>
+            <line x1="120" y1="18" x2="200" y2="24"/>
+          </g>
+          <g fill="#6ECFC0">
+            <animate attributeName="opacity" values="0.4;1;0.4" dur="3.2s" repeatCount="indefinite"/>
+            <circle cx="40"  cy="22" r="2.6"/>
+            <circle cx="80"  cy="40" r="2.6"/>
+            <circle cx="120" cy="18" r="2.6"/>
+            <circle cx="160" cy="42" r="2.6"/>
+            <circle cx="200" cy="24" r="2.6"/>
+          </g>
+        </svg>
+      </div>
+      <div class="mod-n">04 · Collective</div>
+      <div class="mod-name">Neutral <em>Field</em></div>
+      <div class="mod-body">
+        Up to 120 bodies entering one shared physiological state.
+        Group coherence as architecture.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     SLIDE 07 · NERVOUS SYSTEM LAYER
+════════════════════════════════════ -->
+<div class="slide" id="s7">
+  <div class="arch-head">
+    <div class="lbl r r1" style="margin-bottom:16px;">The Nervous System Layer</div>
+    <div class="xl r r2" style="font-size:clamp(30px,3.2vw,52px);">
+      How a property <em>becomes aware.</em>
+    </div>
+  </div>
+
+  <div class="arch-flow r r3">
+    <div class="arch-node">
+      <div class="arch-lbl">Arrival</div>
+      <div class="arch-name">InTune reads the guest</div>
+      <div class="arch-desc">Voice biometric — thirty seconds.
+        Physiological state derived. Protocol set before they reach their room.</div>
+    </div>
+    <div class="arch-arr">→</div>
+    <div class="arch-node">
+      <div class="arch-lbl">Intelligence</div>
+      <div class="arch-name">VibePrint accumulates</div>
+      <div class="arch-desc">HRV, arousal, sleep latency, biometric response —
+        encrypted and stored per guest across every stay.</div>
+    </div>
+    <div class="arch-arr">→</div>
+    <div class="arch-node">
+      <div class="arch-lbl">Delivery</div>
+      <div class="arch-name">The Engine orchestrates</div>
+      <div class="arch-desc">Sound, light, vibration, and water synchronized in real time.
+        Every room. Every modality. One system.</div>
+    </div>
+    <div class="arch-arr">→</div>
+    <div class="arch-node">
+      <div class="arch-lbl">Return</div>
+      <div class="arch-name">The property already knows</div>
+      <div class="arch-desc">Returning guests recognized instantly. Memory layer reactivated.
+        The space begins before they ask.</div>
+    </div>
+  </div>
+
+  <div class="arch-note r r4">
+    No competitor unifies biometric adaptation into the architecture itself.
+    The moat is not any single technology — it is the integration.
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     SLIDE 08 · LIVING PROOF
+════════════════════════════════════ -->
+<div class="slide" id="s8">
+  <div class="proof-l">
+    <div class="lbl r r1">Living Proof</div>
+    <div class="xl r r2">
+      Not a prototype.<br><em>Operating now.</em>
+    </div>
+    <div class="body r r3" style="margin-top:36px; max-width:420px;">
+      Every technology in this manifesto runs daily at Reality Center, Santa Monica.
+      We are not proposing a concept. We are scaling
+      what already operates.
+    </div>
+    <div class="proof-stats r r4">
+      <div class="p-stat">
+        <div class="p-num">800+</div>
+        <div>
+          <div class="p-title">Clinical Sessions</div>
+          <div class="p-sub">UCLA-backed outcomes data. Operation Reset.</div>
+        </div>
+      </div>
+      <div class="p-stat">
+        <div class="p-num">3</div>
+        <div>
+          <div class="p-title">Issued Patents</div>
+          <div class="p-sub">Full integrated stack. Not pending.</div>
+        </div>
+      </div>
+      <div class="p-stat">
+        <div class="p-num">2022</div>
+        <div>
+          <div class="p-title">Live Since</div>
+          <div class="p-sub">Daily operational use.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="v-line"></div>
+
+  <div class="proof-r">
+    <div class="lbl r r1">The Research</div>
+    <div class="sci-list r r2">
+      <div class="sci">
+        <div class="sci-c">Voice Biometrics</div>
+        <div>
+          <div class="sci-f">Vocal prosody is a reliable marker of autonomic nervous system state — measurable without contact, in real time.</div>
+          <div class="sci-s">Lausen & Schacht (2018), Frontiers in Psychology</div>
+        </div>
+      </div>
+      <div class="sci">
+        <div class="sci-c">Vibroacoustic</div>
+        <div>
+          <div class="sci-f">Vibroacoustic therapy reduces anxiety, improves sleep onset, and produces measurable autonomic response.</div>
+          <div class="sci-s">Punkanen & Ala-Ruona (2012)</div>
+        </div>
+      </div>
+      <div class="sci">
+        <div class="sci-c">HRV Tracking</div>
+        <div>
+          <div class="sci-f">HRV is the primary longitudinal indicator of autonomic nervous system balance — the clinical standard of care.</div>
+          <div class="sci-s">McCraty & Shaffer (2015), HeartMath</div>
+        </div>
+      </div>
+      <div class="sci">
+        <div class="sci-c">Group Coherence</div>
+        <div>
+          <div class="sci-f">Group breathing synchronizes heartbeats — measurable collective cardiac coherence across participants.</div>
+          <div class="sci-s">Vickhoff et al. (2013)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     SLIDE 09 · THE CATEGORY
+════════════════════════════════════ -->
+<div class="slide" id="s9">
+  <div class="cat-head">
+    <div class="lbl r r1" style="margin-bottom:20px;">The Category</div>
+    <div class="cat-h r r2">
+      A category that <em>did not exist</em><br>until now.
+    </div>
+  </div>
+
+  <div class="cat-grid r r3">
+    <div class="cat-col cat-col-now">
+      <div class="cat-tag">What hospitality was</div>
+      <div class="cat-list">
+        <div class="cat-item">Architecture that is looked at</div>
+        <div class="cat-item">Spaces designed to impress</div>
+        <div class="cat-item">Generic protocols at scale</div>
+        <div class="cat-item">Memory stored in the brand</div>
+        <div class="cat-item">Luxury as visual statement</div>
+      </div>
+    </div>
+    <div class="cat-arrow">→</div>
+    <div class="cat-col cat-col-next">
+      <div class="cat-tag">What hospitality becomes</div>
+      <div class="cat-list">
+        <div class="cat-item">Architecture that listens</div>
+        <div class="cat-item">Spaces designed to regulate</div>
+        <div class="cat-item">Personal calibration in real time</div>
+        <div class="cat-item">Memory stored in the body</div>
+        <div class="cat-item">Luxury as physiological state</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cat-note r r4">
+    Neuroadaptive Hospitality is not a feature, an amenity, or a wing.
+    It is the next category — and a category of one.
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     SLIDE 10 · THE INVITATION
+════════════════════════════════════ -->
+<div class="slide" id="s10">
+  <div class="bg-ring" style="width:860px;height:860px;"></div>
+  <div class="bg-ring" style="width:580px;height:580px;"></div>
+  <div class="bg-ring" style="width:320px;height:320px;"></div>
+
+  <div class="cta-core">
+    <div class="lbl r r1">The Invitation</div>
+    <div class="cta-h r r2">
+      Experience the future<br><em>physically.</em>
+    </div>
+    <div class="cta-body r r3">
+      We bring the architecture to you. A Reality Bed deploys to your site.
+      Your team experiences the system in the actual property —
+      before a single room is finished.
+    </div>
+    <div class="rule-v r r4" style="margin-top:40px; margin-bottom:40px;"></div>
+    <div class="contact-row r r5">
+      <div class="ct-card">
+        <div class="ct-name">Tarun Raj</div>
+        <div class="ct-role">CEO · Reality Center</div>
+        <div class="ct-mail">info@realitymgmt.com</div>
+      </div>
+      <div class="ct-card">
+        <div class="ct-name">Jonathan Chia</div>
+        <div class="ct-role">COO & Co-Founder · Reality Center</div>
+        <div class="ct-mail">jchia@realitymgmt.com</div>
+      </div>
+      <div class="ct-card">
+        <div class="ct-name">Austin Blaisdell</div>
+        <div class="ct-role">Strategy & Operations · RMT</div>
+        <div class="ct-mail">ablaisdell@realitymgmt.com</div>
+      </div>
+    </div>
+  </div>
+  <div class="cta-foot">realitymgmt.com · weareintune.io · 2026</div>
+</div>
+
+</div><!-- /deck -->
+
+<script>
+(function () {
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const rail   = document.getElementById('rail');
+  const ctr    = document.getElementById('ctr');
+  const total  = slides.length;
+  let cur = 0, busy = false;
+
+  slides.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'ndot' + (i === 0 ? ' on' : '');
+    d.addEventListener('click', () => go(i));
+    rail.appendChild(d);
+  });
+
+  function updateUI(idx) {
+    document.querySelectorAll('.ndot').forEach((d, i) => d.classList.toggle('on', i === idx));
+    ctr.textContent = String(idx + 1).padStart(2,'0') + ' / ' + String(total).padStart(2,'0');
+  }
+
+  function go(idx) {
+    if (busy || idx === cur || idx < 0 || idx >= total) return;
+    busy = true;
+
+    const from = slides[cur];
+    const to   = slides[idx];
+
+    to.classList.remove('active');
+    void to.offsetWidth;
+    from.classList.remove('active');
+    to.classList.add('active');
+    to.scrollTop = 0;
+
+    updateUI(idx);
+    cur = idx;
+    setTimeout(() => { busy = false; }, 720);
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); go(cur + 1); }
+    if (e.key === 'ArrowUp'   || e.key === 'ArrowLeft'  || e.key === 'PageUp')                    { e.preventDefault(); go(cur - 1); }
+    if (e.key === 'Home') { e.preventDefault(); go(0); }
+    if (e.key === 'End')  { e.preventDefault(); go(total - 1); }
+  });
+
+  let wlock = false;
+  document.addEventListener('wheel', e => {
+    if (window.matchMedia('(max-width:920px)').matches) return;
+    if (wlock) return;
+    if (Math.abs(e.deltaY) < 8) return;
+    wlock = true;
+    go(e.deltaY > 0 ? cur + 1 : cur - 1);
+    setTimeout(() => { wlock = false; }, 920);
+  }, { passive: true });
+
+  let tx0 = 0, ty0 = 0, tStart = 0;
+  document.addEventListener('touchstart', e => {
+    tx0 = e.touches[0].clientX;
+    ty0 = e.touches[0].clientY;
+    tStart = Date.now();
+  }, { passive: true });
+
+  document.addEventListener('touchend', e => {
+    const dx = tx0 - e.changedTouches[0].clientX;
+    const dy = ty0 - e.changedTouches[0].clientY;
+    const dt = Date.now() - tStart;
+
+    if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.4) {
+      go(dx > 0 ? cur + 1 : cur - 1);
+      return;
+    }
+
+    if (Math.abs(dy) > 80 && Math.abs(dy) > Math.abs(dx) * 1.6 && dt < 600) {
+      const slide = slides[cur];
+      const atTop    = slide.scrollTop <= 2;
+      const atBottom = slide.scrollTop + slide.clientHeight >= slide.scrollHeight - 2;
+      if (dy > 0 && atBottom) go(cur + 1);
+      else if (dy < 0 && atTop) go(cur - 1);
+    }
+  }, { passive: true });
+})();
+</script>
+</body>
+</html>
